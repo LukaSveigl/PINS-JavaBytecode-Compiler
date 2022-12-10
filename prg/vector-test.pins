@@ -1,0 +1,295 @@
+#{
+# A resizable vector implementation in PINS'22.
+}#
+
+#{
+# Creates a new vector.
+# @param vec The vector pointer to be initialized.
+# @return The initialized vector.
+}#
+fun createVector(vec : ^int) : ^int = ({
+    vectorCapacity = 10;
+    vec = new ((vectorCapacity + 2) * 8);
+    (((vec : int) + (0 * 8)) : ^int)^ = 0;
+    (((vec : int) + (1 * 8)) : ^int)^ = vectorCapacity;
+    vec;
+}
+where
+    var vectorCapacity : int;
+);
+
+#{
+# Prints the vector.
+# @param vec The vector pointer to be printed.
+}#
+fun printVector(vec : ^int) : void = ({
+    i = 0;
+    vectorSize = (((vec : int) + (0 * 8)) : ^int)^;
+
+    putChar('[');
+    while (i < vectorSize) do
+        putInt(get(vec, i));
+        if (i != vectorSize - 1) then
+            putChar(',');
+            putChar(' ');
+        end;
+        i = i + 1;
+    end;
+    putChar(']');
+    putChar(endl());
+}
+where
+    var i : int;
+    var vectorSize : int;
+);
+
+#{
+# Content manipulation functions.
+}#
+
+#{
+# Returns the element at the given index or throws error if index is out of bounds.
+# @param vec The vector pointer.
+# @param index The index of the element to be returned.
+# @return The element at the given index.
+}#
+fun get(vec : ^int, index : int) : int = ({
+    vectorSize = (((vec : int) + (0 * 8)) : ^int)^;
+    if (index < 0 | index > vectorSize) then
+        exit(1);
+    end;
+    (((vec : int) + ((index + 2) * 8)) : ^int)^;
+}
+where
+    var vectorSize : int;
+);
+
+#{
+# Pushes the element to the end of the vector and resizes if needed.
+# @param vec The vector pointer.
+# @param element The element to be pushed.
+# @return The vector pointer.
+}#
+fun push(vec : ^int, value : int) : ^int = ({
+    vectorSize = (((vec : int) + (0 * 8)) : ^int)^;
+    vectorCapacity = (((vec : int) + (1 * 8)) : ^int)^;
+
+    if (vectorSize == vectorCapacity) then
+        vec = resize(vec);
+    end;
+    (((vec : int) + ((vectorSize + 2) * 8)) : ^int)^ = value;
+    vectorSize = vectorSize + 1;
+    (((vec : int) + (0 * 8)) : ^int)^ = vectorSize;
+    vec;
+}
+where
+    var vectorSize : int;
+    var vectorCapacity : int;
+);
+
+#{
+# Deletes the last element of the vector and resizes if needed.
+# @param vec The vector pointer.
+# @return The vector pointer.
+}#
+fun pop(vec : ^int) : ^int = ({
+    vectorSize = (((vec : int) + (0 * 8)) : ^int)^;
+    vectorCapacity = (((vec : int) + (1 * 8)) : ^int)^;
+
+    if (vectorSize == 0) then
+        exit(1);
+    end;
+    vectorSize = vectorSize - 1;
+    if ((vectorSize * 2) <= vectorCapacity & vectorSize > 10) then
+        vec = shrink(vec);
+    end;
+    (((vec : int) + (0 * 8)) : ^int)^ = vectorSize;
+    vec;
+}
+where
+    var vectorSize : int;
+    var vectorCapacity : int;
+);
+
+#{
+# Inserts the element at the given index or throws error if index is out of bounds.
+# @param vec The vector pointer.
+# @param index The index of the element to be inserted.
+# @param element The element to be inserted.
+# @return The vector pointer.
+}#
+fun put(vec : ^int, index : int, value : int) : ^int = ({
+    vectorSize = (((vec : int) + (0 * 8)) : ^int)^;
+    if (index < 0 | index > vectorSize) then
+        exit(1);
+    end;
+    (((vec : int) + ((index + 2) * 8)) : ^int)^ = value;
+    vec;
+}
+where
+    var vectorSize : int;
+);
+
+#{
+# Utility functions for memory manipulation.
+}#
+
+#{
+# Resizes the vector to 2x its capacity.
+# @param vec The vector pointer.
+# @return The resized vector pointer.
+}#
+fun resize(vec : ^int) : ^int = ({
+    vectorSize = (((vec : int) + (0 * 8)) : ^int)^;
+    vectorCapacity = (((vec : int) + (1 * 8)) : ^int)^;
+
+    newCapacity = vectorCapacity * 2;
+    newVec = new ((newCapacity + 2) * 8);
+
+    (((newVec : int) + (0 * 8)) : ^int)^ = vectorSize;
+    (((newVec : int) + (1 * 8)) : ^int)^ = newCapacity;
+
+    i = 0;
+    while (i < vectorSize) do
+        (((newVec : int) + ((i + 2) * 8)) : ^int)^ = get(vec, i);
+        i = i + 1;
+    end;
+
+    vec = newVec;
+    vec;
+}
+where
+    var i : int;
+
+    var vectorCapacity : int;
+    var vectorSize : int;
+
+    var newCapacity : int;
+    var newVec : ^int;
+);
+
+#{
+# Shrinks the vector to half its capacity.
+# @param vec The vector pointer.
+# @return The vector pointer.
+}#
+fun shrink(vec : ^int) : ^int = ({
+    vectorSize = (((vec : int) + (0 * 8)) : ^int)^;
+    vectorCapacity = (((vec : int) + (1 * 8)) : ^int)^;
+
+    newCapacity = vectorCapacity / 2;
+    newVec = new (newCapacity * 8);
+    i = 0;
+    while (i < vectorSize) do
+        (((newVec : int) + (i * 8)) : ^int)^ = get(vec, i);
+        i = i + 1;
+    end;
+
+    (((newVec : int) + (0 * 8)) : ^int)^ = vectorSize;
+    (((newVec : int) + (1 * 8)) : ^int)^ = newCapacity;
+
+    vec = newVec;
+    vec;
+}
+where
+    var i : int;
+
+    var vectorCapacity : int;
+    var vectorSize : int;
+
+    var newCapacity : int;
+    var newVec : ^int;
+);
+
+fun endl() : char = (10 : char);
+
+var vector : ^int;
+
+fun main() : int = ({
+    vector = createVector(vector);
+    printVector(vector);
+    vector = push(vector, 1);
+    vector = push(vector, 2);
+    vector = push(vector, 3);
+    vector = push(vector, 4);
+    vector = push(vector, 5);
+    printVector(vector);
+    vector = push(vector, 6);
+    vector = push(vector, 7);
+    vector = push(vector, 8);
+    vector = push(vector, 9);
+    vector = push(vector, 10);
+    printVector(vector);
+    vector = push(vector, 11);
+    vector = push(vector, 12);
+    vector = push(vector, 13);
+    vector = push(vector, 14);
+    vector = push(vector, 15);
+    vector = push(vector, 16);
+    vector = push(vector, 17);
+    vector = push(vector, 18);
+    vector = push(vector, 19);
+    vector = push(vector, 20);
+    printVector(vector);
+    vector = push(vector, 21);
+    vector = push(vector, 22);
+    vector = push(vector, 23);
+    vector = push(vector, 24);
+    vector = push(vector, 25);
+    vector = push(vector, 26);
+    vector = push(vector, 27);
+    vector = push(vector, 28);
+    vector = push(vector, 29);
+    vector = push(vector, 30);
+    printVector(vector);
+    vector = push(vector, 31);
+    vector = push(vector, 32);
+    vector = push(vector, 33);
+    vector = push(vector, 34);
+    vector = push(vector, 35);
+    printVector(vector);
+    vector = pop(vector);
+    vector = pop(vector);
+    vector = pop(vector);
+    vector = pop(vector);
+    vector = pop(vector);
+    printVector(vector);
+    vector = pop(vector);
+    vector = pop(vector);
+    vector = pop(vector);
+    vector = pop(vector);
+    vector = pop(vector);
+    printVector(vector);
+    vector = put(vector, 0, 17);
+    vector = put(vector, 1, 32);
+    vector = put(vector, 2, 49);
+    vector = put(vector, 3, 64);
+    printVector(vector);
+
+    vec2 = createVector(vec2);
+    printVector(vec2);
+    vec2 = push(vec2, 1);
+    vec2 = push(vec2, 2);
+    vec2 = push(vec2, 3);
+    printVector(vec2);
+    vec2 = push(vec2, 4);
+    vec2 = push(vec2, 5);
+    vec2 = push(vec2, 6);
+    printVector(vec2);
+    vec2 = pop(vec2);
+    vec2 = pop(vec2);
+    printVector(vec2);
+
+    0;
+}
+where
+    var vec2 : ^int;
+);
+
+#{ Forward declarations }#
+fun putChar(c : char) : void = none;
+fun getChar() : char = (0 : char);
+fun putInt(i : int) : void = none;
+fun getInt() : int = 0;
+fun randInt(min : int, max : int) : int = 0;
+fun exit(i : int) : void = none;

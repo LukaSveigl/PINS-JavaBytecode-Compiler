@@ -1,0 +1,302 @@
+#{
+# A tic-tac-toe implementation in PINS'22.
+# Author: Luka Šveigl
+}#
+
+#{ The game board. }#
+var board : [3][3]char;
+#{ The winner symbol. }#
+var winner : char;
+
+#{ Definitions for readability. }#
+typ bool  = int;
+var true  : bool;
+var false : bool;
+
+#{
+# Display functions.
+}#
+
+#{
+# Display the current board state.
+}#
+fun printBoard() : void = ({
+    i = 0;
+    while (i < 3) do
+        putChar('|');
+        j = 0;
+        while (j < 3) do
+            putChar(board[i][j]);
+            putChar('|');
+            j = j + 1;
+        end;
+        putChar(endl());
+        i = i + 1;
+    end;
+}
+where
+    var i : int;
+    var j : int;
+);
+
+#{
+# Game logic functions.
+}#
+
+#{
+# Perform a player move by prompting the user for a position.
+}#
+fun playerMove() : void = ({
+    putChar('R');putChar('o');putChar('w');putChar(':');putChar(' ');
+    x = getInt();
+    putChar('C');putChar('o');putChar('l');putChar(':');putChar(' ');
+    y = getInt();
+
+    if (checkSpace(x, y) == true) then
+        board[x][y] = 'X';
+    else
+        while (checkSpace(x, y) == false) do
+            putChar('R');putChar('o');putChar('w');putChar(':');putChar(' ');
+            x = getInt();
+            putChar('C');putChar('o');putChar('l');putChar(':');putChar(' ');
+            y = getInt();
+        end;
+        board[x][y] = 'X';
+    end;
+}
+where
+    var x : int;
+    var y : int;
+);
+
+#{
+# Perform a computer move by choosing a random position.
+}#
+fun computerMove() : void = ({
+    x = randInt(1, 3);
+    y = randInt(1, 3);
+
+    if (checkSpace(x, y) == true) then
+        board[x][y] = 'O';
+    else
+        while (checkSpace(x, y) == false) do
+            x = randInt(1, 3);
+            y = randInt(1, 3);
+        end;
+        board[x][y] = 'O';
+    end;
+}
+where
+    var x : int;
+    var y : int;
+);
+
+#{
+# Game state checks.
+}#
+
+#{
+# Check if the game is over due to a win.
+# @return true if the game is over due to a win, false otherwise.
+}#
+fun checkVictory() : bool = ({
+    checkHorizontal() | checkVertical() | checkDiagonal();
+}
+where
+    fun checkHorizontal() : bool = ({
+        i = 0;
+        j = 0;
+
+        finished = false;
+
+        while (i < 3 & finished == false) do
+            j = 0;
+            if (board[i][j] == 'X' & board[i][j + 1] == 'X' & board[i][j + 2] == 'X') then
+                winner = 'X'; #{putChar('X');putChar(' ');putChar('W');putChar('I');putChar('N');putChar(endl());}#
+                finished = true;
+            else if (board[i][j] == 'O' & board[i][j + 1] == 'O' & board[i][j + 2] == 'O') then
+                winner = 'O'; #{putChar('O');putChar(' ');putChar('W');putChar('I');putChar('N');putChar(endl());}#
+                finished = true;
+            end;
+            end;
+            i = i + 1;
+        end;
+
+        finished;
+    }
+    where
+        var i : int;
+        var j : int;
+        var finished : bool;
+    );
+
+    fun checkVertical() : bool = ({
+        i = 0;
+        j = 0;
+
+        finished = false;
+
+        while (i < 3 & finished == false) do
+            j = 0;
+            if (board[j][i] == 'X' & board[j + 1][i] == 'X' & board[j + 2][i] == 'X') then
+                winner = 'X'; #{putChar('X');putChar(' ');putChar('W');putChar('I');putChar('N');putChar(endl());}#
+                finished = true;
+            else if (board[j][i] == 'O' & board[j + 1][i] == 'O' & board[j + 2][i] == 'O') then
+                winner = 'O'; #{putChar('O');putChar(' ');putChar('W');putChar('I');putChar('N');putChar(endl());}#
+                finished = true;
+            end;
+            end;
+            i = i + 1;
+        end;
+
+        finished;
+    }
+    where
+        var i : int;
+        var j : int;
+        var finished : bool;
+    );
+
+    fun checkDiagonal() : bool = ({
+        i = 0;
+        j = 0;
+
+        finished = false;
+
+        if (board[i][j] == 'X' & board[i + 1][j + 1] == 'X' & board[i + 2][j + 2] == 'X') then
+            winner = 'X'; #{putChar('X');putChar(' ');putChar('W');putChar('I');putChar('N');putChar(endl());}#
+            finished = true;
+        else if (board[i][j] == 'O' & board[i + 1][j + 1] == 'O' & board[i + 2][j + 2] == 'O') then
+            winner = 'O'; #{putChar('O');putChar(' ');putChar('W');putChar('I');putChar('N');putChar(endl());}#
+            finished = true;
+        end;
+        end;
+
+        if (board[i][j + 2] == 'X' & board[i + 1][j + 1] == 'X' & board[i + 2][j] == 'X') then
+            winner = 'X'; #{putChar('X');putChar(' ');putChar('W');putChar('I');putChar('N');putChar(endl());}#
+            finished = true;
+        else if (board[i][j + 2] == 'O' & board[i + 1][j + 1] == 'O' & board[i + 2][j] == 'O') then
+            winner = 'O'; #{putChar('O');putChar(' ');putChar('W');putChar('I');putChar('N');putChar(endl());}#
+            finished = true;
+        end;
+        end;
+
+        finished;
+    }
+    where
+        var i : int;
+        var j : int;
+        var finished : bool;
+    );
+);
+
+#{
+# Check if the game is over due to a win or stalemate.
+# @return true if the game is over, false otherwise.
+}#
+fun checkFinished() : bool = ({
+    finished = true;
+    i = 0;
+
+    while (i < 3) do
+        j = 0;
+        while (j < 3) do
+            if (board[i][j] == ' ') then
+                finished = false;
+            end;
+            j = j + 1;
+        end;
+        i = i + 1;
+    end;
+
+    if (checkVictory() == true) then
+        finished = true;
+    end;
+
+    finished;
+}
+where
+    var finished : bool;
+    var i : int;
+    var j : int;
+);
+
+#{
+# Check if the space is empty.
+# @param x The x coordinate of the space.
+# @param y The y coordinate of the space.
+# @return true if the space is empty, false otherwise.
+}#
+fun checkSpace(x : int, y : int) : bool = {
+    board[x][y] == ' ';
+};
+
+#{
+# Driver functions.
+}#
+
+#{
+# Initialize the game.
+}#
+fun init() : void = ({
+    true = 1;
+    false = 0;
+    i = 0;
+
+    while (i < 3) do
+        j = 0;
+        while (j < 3) do
+            board[i][j] = ' ';
+            j = j + 1;
+        end;
+        i = i + 1;
+    end;
+
+    putChar('Y');putChar('o');putChar('u');putChar(' ');
+    putChar('a');putChar('r');putChar('e');putChar(' ');
+    putChar('X');putChar('!');putChar(endl());
+}
+where
+    var i : int;
+    var j : int;
+);
+
+#{
+# The main game loop.
+}#
+fun game() : void = ({
+    init();
+
+    finished = false;
+
+    while (finished == false & checkFinished() == false) do
+        printBoard();
+        playerMove();
+        if (checkFinished() == false) then
+            computerMove();
+        else
+            printBoard();
+            finished = true;
+        end;
+        putChar('-');putChar('-');putChar('-');putChar('-');putChar('-');putChar('-');putChar(endl());
+    end;
+    putChar(winner);putChar(' ');putChar('W');putChar('I');putChar('N');putChar(endl());
+}
+where
+    var finished : bool;
+);
+
+fun endl() : char = (10 : char);
+
+fun main() : int = {
+    game();
+
+    0;
+};
+
+#{ Forward declarations }#
+fun putChar(c : char) : void = none;
+fun getChar() : char = (0 : char);
+fun putInt(i : int) : void = none;
+fun getInt() : int = 0;
+fun randInt(min : int, max : int) : int = 0;

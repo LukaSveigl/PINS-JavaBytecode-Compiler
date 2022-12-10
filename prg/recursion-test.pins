@@ -1,0 +1,63 @@
+#{
+# Tests showcasing recursion in PINS.
+}#
+
+fun fib(i : int) : int = ({
+    if (i <= 1) then
+        result = i;
+    else
+        result = fib(i - 1) + fib(i - 2);
+    end;
+    result;
+}
+where
+    var result : int;
+);
+
+fun factorial(i : int) : int = ({
+    if (i <= 1) then
+        result = 1;
+    else
+        result = i * factorial(i - 1);
+    end;
+    result;
+}
+where
+    var result : int;
+);
+
+fun GCD(a : int, b : int) : int = ({
+    if (b == 0) then
+        result = a;
+    else
+        result = GCD(b, a % b);
+    end;
+    result;
+}
+where
+    var result : int;
+);
+
+fun main() : int = {
+    putInt(fib(10));
+    putChar(endl());
+    putInt(factorial(10));
+    putChar(endl());
+    putInt(GCD(360, 64));
+    putChar(endl());
+    putInt(GCD(36000, 640));
+    putChar(endl());
+    putInt(GCD(360000000, 640000));
+    putChar(endl());
+    0;
+};
+
+#{ Utils }#
+fun endl() : char = (10 : char);
+
+#{ Forward declarations }#
+fun putChar(c : char) : void = none;
+fun getChar() : char = (0 : char);
+fun putInt(i : int) : void = none;
+fun getInt() : int = 0;
+fun randInt(min : int, max : int) : int = 0;

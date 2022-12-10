@@ -1,0 +1,59 @@
+fun print(arr : ^[50]char, size : int) : void = ({
+    i = 0;
+    while (i < size) do
+        putChar(arr^[i]);
+        i = i + 1;
+    end;
+}
+where
+    var i : int;
+);
+
+fun permute(arr : ^[50]char, l : int, r : int, size : int) : void = ({
+    if (l != r) then
+        i = l;
+        while (i <= r) do
+            arr = swap(arr, i, l);
+            permute(arr, l + 1, r, size);
+            arr = swap(arr, i, l);
+            i = i + 1;
+        end;
+    else
+        print(arr, size);
+        putChar(endl());
+    end;
+}
+where
+    var i : int;
+);
+
+fun swap(arr : ^[50]char, i : int, j : int) : ^[50]char = ({
+    temp = arr^[i];
+    arr^[i] = arr^[j];
+    arr^[j] = temp;
+    arr;
+}
+where
+    var temp : char;
+);
+
+fun endl() : char = (10 : char);
+
+fun main() : void = ({
+    arr[0] = 'p';
+    arr[1] = 'i';
+    arr[2] = 'n';
+    arr[3] = 's';
+    permute(^arr, 0, 3, 4);
+}
+where
+    var arr : [50]char;
+);
+
+#{ Forward declarations }#
+fun putChar(c : char) : void = none;
+fun getChar() : char = (0 : char);
+fun putInt(i : int) : void = none;
+fun getInt() : int = 0;
+fun randInt(min : int, max : int) : int = 0;
+fun exit(i : int) : void = none;
