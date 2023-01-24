@@ -19,7 +19,7 @@ public class StmtGenerator implements AstVisitor<ImcStmt, Stack<MemFrame>> {
 	 * The visit method for the assignment statement.
 	 *
 	 * @param assignStmt The assignment statement to visit.
-	 * @param frames The stack of memory frames.
+	 * @param frames     The stack of memory frames.
 	 * @return The assignment statement intermediate code.
 	 */
 	@Override
@@ -35,7 +35,7 @@ public class StmtGenerator implements AstVisitor<ImcStmt, Stack<MemFrame>> {
 	 * The visit method for the expression statement.
 	 *
 	 * @param exprStmt The expression statement to visit.
-	 * @param frames The stack of memory frames.
+	 * @param frames   The stack of memory frames.
 	 * @return The expression statement intermediate code.
 	 */
 	@Override
@@ -102,7 +102,7 @@ public class StmtGenerator implements AstVisitor<ImcStmt, Stack<MemFrame>> {
 	 * The visit method for the while statement.
 	 *
 	 * @param whileStmt The while statement to visit.
-	 * @param frames The stack of memory frames.
+	 * @param frames    The stack of memory frames.
 	 * @return The while statement intermediate code.
 	 */
 	@Override
@@ -139,7 +139,7 @@ public class StmtGenerator implements AstVisitor<ImcStmt, Stack<MemFrame>> {
 	/**
 	 * The visit method for the list of statements.
 	 *
-	 * @param stmts The list of statements to visit.
+	 * @param stmts  The list of statements to visit.
 	 * @param frames The stack of memory frames.
 	 * @return The list of statements intermediate code.
 	 */

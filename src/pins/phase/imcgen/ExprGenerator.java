@@ -21,7 +21,7 @@ public class ExprGenerator implements AstVisitor<ImcExpr, Stack<MemFrame>> {
 	 * The visit method for the where expression.
 	 *
 	 * @param whereExpr The where expression to visit.
-	 * @param frames The stack of memory frames.
+	 * @param frames    The stack of memory frames.
 	 * @return The where expression intermediate code.
 	 */
 	@Override
@@ -36,7 +36,7 @@ public class ExprGenerator implements AstVisitor<ImcExpr, Stack<MemFrame>> {
 	 * The visit method for the statement expression.
 	 *
 	 * @param stmtExpr The statement expression to visit.
-	 * @param frames The stack of memory frames.
+	 * @param frames   The stack of memory frames.
 	 * @return The statement expression intermediate code.
 	 */
 	@Override
@@ -63,7 +63,7 @@ public class ExprGenerator implements AstVisitor<ImcExpr, Stack<MemFrame>> {
 	 * The visit method for the const expression.
 	 *
 	 * @param constExpr The const expression to visit.
-	 * @param frames The stack of memory frames.
+	 * @param frames    The stack of memory frames.
 	 * @return The const expression intermediate code.
 	 */
 	@Override
@@ -99,7 +99,7 @@ public class ExprGenerator implements AstVisitor<ImcExpr, Stack<MemFrame>> {
 	 * The visit method for the name expression.
 	 *
 	 * @param nameExpr The name expression to visit.
-	 * @param frames The stack of memory frames.
+	 * @param frames   The stack of memory frames.
 	 * @return The name expression intermediate code.
 	 */
 	@Override
@@ -167,7 +167,7 @@ public class ExprGenerator implements AstVisitor<ImcExpr, Stack<MemFrame>> {
 	 * The visit method for the call expression.
 	 *
 	 * @param callExpr The call expression to visit.
-	 * @param frames The stack of memory frames.
+	 * @param frames   The stack of memory frames.
 	 * @return The call expression intermediate code.
 	 */
 	@Override
@@ -217,7 +217,7 @@ public class ExprGenerator implements AstVisitor<ImcExpr, Stack<MemFrame>> {
 	 * The visit method for the binary expression.
 	 *
 	 * @param binExpr The binary expression to visit.
-	 * @param frames The stack of memory frames.
+	 * @param frames  The stack of memory frames.
 	 * @return The binary expression intermediate code.
 	 */
 	@Override
@@ -291,7 +291,7 @@ public class ExprGenerator implements AstVisitor<ImcExpr, Stack<MemFrame>> {
 	 * The visit method for the prefix expression.
 	 *
 	 * @param preExpr The prefix expression to visit.
-	 * @param frames The stack of memory frames.
+	 * @param frames  The stack of memory frames.
 	 * @return The prefix expression intermediate code.
 	 */
 	@Override
@@ -363,7 +363,7 @@ public class ExprGenerator implements AstVisitor<ImcExpr, Stack<MemFrame>> {
 	 * The visit method for the postfix expression.
 	 *
 	 * @param pstExpr The postfix expression to visit.
-	 * @param frames The stack of memory frames.
+	 * @param frames  The stack of memory frames.
 	 * @return The postfix expression intermediate code.
 	 */
 	@Override
@@ -379,7 +379,7 @@ public class ExprGenerator implements AstVisitor<ImcExpr, Stack<MemFrame>> {
 	 * The visit method for the cast expression.
 	 *
 	 * @param castExpr The cast expression to visit.
-	 * @param frames The stack of memory frames.
+	 * @param frames   The stack of memory frames.
 	 * @return The cast expression intermediate code.
 	 */
 	@Override

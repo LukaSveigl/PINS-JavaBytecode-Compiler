@@ -28,7 +28,7 @@ public class MemEvaluator extends AstFullVisitor<Object, MemEvaluator.FunContext
 	 * General purpose visit method, which traverses the abstract syntax trees.
 	 *
 	 * @param trees The abstract syntax trees to traverse.
-	 * @param ctx The current function context.
+	 * @param ctx   The current function context.
 	 * @return The result of the traversal.
 	 */
 	@Override
@@ -57,7 +57,7 @@ public class MemEvaluator extends AstFullVisitor<Object, MemEvaluator.FunContext
 	 * Visit method for variable declarations.
 	 *
 	 * @param varDecl The variable declaration to visit.
-	 * @param ctx The current function context.
+	 * @param ctx     The current function context.
 	 * @return The result of the visit.
 	 */
 	@Override
@@ -88,7 +88,7 @@ public class MemEvaluator extends AstFullVisitor<Object, MemEvaluator.FunContext
 	 * Visit method for function declarations.
 	 *
 	 * @param funDecl The function declaration to visit.
-	 * @param ctx The current function context.
+	 * @param ctx     The current function context.
 	 * @return The result of the visit.
 	 */
 	@Override
@@ -129,7 +129,7 @@ public class MemEvaluator extends AstFullVisitor<Object, MemEvaluator.FunContext
 	 * Visit method for parameter declarations.
 	 *
 	 * @param parDecl The parameter declaration to visit.
-	 * @param ctx The current function context.
+	 * @param ctx     The current function context.
 	 * @return The result of the visit.
 	 */
 	@Override
@@ -149,7 +149,7 @@ public class MemEvaluator extends AstFullVisitor<Object, MemEvaluator.FunContext
 	 * Visit method for call expressions.
 	 *
 	 * @param callExpr The call expression to visit.
-	 * @param ctx The current function context.
+	 * @param ctx      The current function context.
 	 * @return The result of the visit.
 	 */
 	@Override
@@ -175,7 +175,7 @@ public class MemEvaluator extends AstFullVisitor<Object, MemEvaluator.FunContext
 	 * Visit method for expressions.
 	 *
 	 * @param stmtExpr The statement expression to visit.
-	 * @param ctx The current function context.
+	 * @param ctx      The current function context.
 	 * @return The result of the visit.
 	 */
 	@Override
@@ -191,7 +191,7 @@ public class MemEvaluator extends AstFullVisitor<Object, MemEvaluator.FunContext
 	 * Visit method for where expressions.
 	 *
 	 * @param whereExpr The where expression to visit.
-	 * @param ctx The current function context.
+	 * @param ctx       The current function context.
 	 * @return The result of the visit.
 	 */
 	@Override
@@ -219,7 +219,7 @@ public class MemEvaluator extends AstFullVisitor<Object, MemEvaluator.FunContext
 	 * Visit method for expression statements.
 	 *
 	 * @param exprStmt The expression statement to visit.
-	 * @param ctx The current function context.
+	 * @param ctx      The current function context.
 	 * @return The result of the visit.
 	 */
 	@Override

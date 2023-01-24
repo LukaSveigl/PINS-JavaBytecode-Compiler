@@ -30,15 +30,14 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
     /**
      * General purpose visit method, which traverses the abstract syntax trees.
      * It visits the trees in 5 separate loops:
-     * <ul> <li>1. The first loop maps declarations to semantic types.</li>
-     *      <li>2. The second loop sets declared type definitions.</li>
-     *      <li>3. The third loop resolves variable types.</li>
-     *      <li>4. The fourth loop resolves function return and parameter types.</li>
-     *      <li>5. The fifth loop resolves function body types.</li>
-     * </ul>
+     * 1. The first loop maps declarations to semantic types.
+     * 2. The second loop sets declared type definitions.
+     * 3. The third loop resolves variable types.
+     * 4. The fourth loop resolves function return and parameter types.
+     * 5. The fifth loop resolves function body types.
      *
      * @param trees The abstract syntax trees to traverse.
-     * @param mode The mode of the name resolver.
+     * @param mode  The mode of the name resolver.
      * @return The result of the traversal.
      */
     @Override
@@ -82,7 +81,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for type declarations.
      *
      * @param typDecl The type declaration to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode    The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error If the type declaration is cyclical.
      */
@@ -119,7 +118,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for variable declarations.
      *
      * @param varDecl The variable declaration to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode    The mode of the name resolver.
      * @return The result of the visit.
      */
     @Override
@@ -131,7 +130,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for function declarations.
      *
      * @param funDecl The function declaration to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode    The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error If the function return type is invalid or the actual and expected return type do not match.
      */
@@ -176,7 +175,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for parameter declarations.
      *
      * @param parDecl The parameter declaration to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode    The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error If the parameter type is invalid.
      */
@@ -199,7 +198,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for atomic types.
      *
      * @param atomType The atomic type to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode     The mode of the name resolver.
      * @return The result of the visit.
      */
     @Override
@@ -226,7 +225,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visti method for pointer types.
      *
      * @param ptrType The pointer type to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode    The mode of the name resolver.
      * @return The result of the visit.
      */
     @Override
@@ -245,7 +244,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for array types.
      *
      * @param arrType The array type to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode    The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error If the array size type is invalid.
      */
@@ -300,7 +299,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for named types.
      *
      * @param typeName The named type to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode     The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error If the named type is declared cyclically.
      */
@@ -334,7 +333,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for atomic expressions.
      *
      * @param constExpr The atomic expression to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode      The mode of the name resolver.
      * @return The result of the visit.
      */
     @Override
@@ -369,7 +368,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for prefix expressions.
      *
      * @param preExpr The prefix expression to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode    The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error If the prefix expression type is invalid.
      */
@@ -440,7 +439,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for postfix expressions.
      *
      * @param postExpr The postfix expression to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode     The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error If the postfix expression type is invalid.
      */
@@ -468,7 +467,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for binary expressions.
      *
      * @param binExpr The binary expression to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode    The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error If the binary expression's subexpressions' types are invalid.
      */
@@ -547,7 +546,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for named expressions.
      *
      * @param nameExpr The named expression to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode     The mode of the name resolver.
      * @return The result of the visit.
      */
     @Override
@@ -565,7 +564,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for call expressions.
      *
      * @param callExpr The call expression to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode     The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error If the arguments and parameter types do not match.
      */
@@ -606,7 +605,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for cast expressions.
      *
      * @param castExpr The cast expression to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode     The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error If the cast expression's type is invalid.
      */
@@ -635,7 +634,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for where expressions.
      *
      * @param whereExpr The where expression to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode      The mode of the name resolver.
      * @return The result of the visit.
      */
     @Override
@@ -665,7 +664,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for statement expressions.
      *
      * @param stmtExpr The statement expression to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode     The mode of the name resolver.
      * @return The result of the visit.
      */
     @Override
@@ -688,7 +687,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for expression statements.
      *
      * @param exprStmt The expression statement to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode     The mode of the name resolver.
      * @return The result of the visit.
      */
     @Override
@@ -703,7 +702,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for assignment statements.
      *
      * @param assignStmt The assignment statement to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode       The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error If the assignment types are invalid or not matching.
      */
@@ -742,7 +741,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for if statements.
      *
      * @param ifStmt The if statement to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode   The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error If the if statement's condition is invalid or if then and else body types are not void.
      */
@@ -784,7 +783,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
      * Visit method for while statements.
      *
      * @param whileStmt The while statement to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode      The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error If the while statement's condition is invalid or if body type is not void.
      */
@@ -816,8 +815,8 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
     /**
      * Checks if two types are STRUCTURALLY equal.
      *
-     * @param type1 The first type.
-     * @param type2 The second type.
+     * @param type1      The first type.
+     * @param type2      The second type.
      * @param equivTypes The map of semantic names and their equivalent types.
      * @return True if the types are STRUCTURALLY equal, false otherwise.
      */
@@ -905,7 +904,7 @@ public class TypeChecker extends AstFullVisitor<SemType, TypeChecker.Mode> {
     /**
      * Checks if two types are declared cyclically.
      *
-     * @param type The type to check.
+     * @param type       The type to check.
      * @param namedTypes The set of named types.
      * @return True if the type is declared cyclically, false otherwise.
      */

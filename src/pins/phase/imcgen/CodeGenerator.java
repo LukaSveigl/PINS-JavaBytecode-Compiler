@@ -18,7 +18,7 @@ public class CodeGenerator extends AstFullVisitor<Object, Stack<MemFrame>> {
     /**
      * The general purpose visit method, which traverses the abstract syntax trees.
      *
-     * @param trees The abstract syntax trees to traverse.
+     * @param trees  The abstract syntax trees to traverse.
      * @param frames The stack of memory frames.
      * @return The abstract syntax trees.
      */
@@ -38,7 +38,7 @@ public class CodeGenerator extends AstFullVisitor<Object, Stack<MemFrame>> {
      * The visit method for function declarations, which serve as entry points for the code generator.
      *
      * @param funDecl The function declaration to visit.
-     * @param frames The stack of memory frames.
+     * @param frames  The stack of memory frames.
      * @return The function declaration.
      */
     @Override

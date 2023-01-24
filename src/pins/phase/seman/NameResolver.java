@@ -24,17 +24,15 @@ public class NameResolver extends AstFullVisitor<Object, NameResolver.Mode> {
     // GENERAL PURPOSE
 
     /**
-     * General purpose visit method, which traverses the abstract syntax trees.
-     * It visits the trees in 5 separate loops:
-     * <ul> <li>1. The first loop resolves the names of types.</li>
-     *      <li>2. The second loop resolves the values of types.</li>
-     *      <li>3. The third loop resolves the names of variables.</li>
-     *      <li>4. The fourth loop resolves the names, parameter types and return types of functions.</li>
-     *      <li>5. The fifth loop resolves the names of parameters and the expression of functions.</li>
-     * </ul>
+     * General purpose visit method, which traverses the abstract syntax trees. It visits the trees in 5 separate loops:
+     * 1. The first loop resolves the names of types.
+     * 2. The second loop resolves the values of types.
+     * 3. The third loop resolves the names of variables.
+     * 4. The fourth loop resolves the names, parameter types and return types of functions.
+     * 5. The fifth loop resolves the names of parameters and the expression of functions.
      *
      * @param trees The abstract syntax trees to traverse.
-     * @param mode The mode of the name resolver.
+     * @param mode  The mode of the name resolver.
      * @return The result of the traversal.
      */
     @Override
@@ -79,7 +77,7 @@ public class NameResolver extends AstFullVisitor<Object, NameResolver.Mode> {
      * Visit method for variable declaration.
      *
      * @param varDecl The variable declaration to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode    The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error if the variable is already defined.
      */
@@ -101,7 +99,7 @@ public class NameResolver extends AstFullVisitor<Object, NameResolver.Mode> {
      * Visit method for type declaration.
      *
      * @param typDecl The type declaration to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode    The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error if the type is already defined.
      */
@@ -128,7 +126,7 @@ public class NameResolver extends AstFullVisitor<Object, NameResolver.Mode> {
      * Visit method for function declaration.
      *
      * @param funDecl The function declaration to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode    The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error if the function is already defined.
      */
@@ -174,7 +172,7 @@ public class NameResolver extends AstFullVisitor<Object, NameResolver.Mode> {
      * Visit method for named type.
      *
      * @param typeName The type name to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode     The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error if the type is not defined.
      */
@@ -194,7 +192,7 @@ public class NameResolver extends AstFullVisitor<Object, NameResolver.Mode> {
      * Visit method for named expression.
      *
      * @param nameExpr The named expression to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode     The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error if the name is not defined.
      */
@@ -218,7 +216,7 @@ public class NameResolver extends AstFullVisitor<Object, NameResolver.Mode> {
      * Visit method for call expression.
      *
      * @param callExpr The call expression to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode     The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error if the function is not defined.
      */
@@ -244,7 +242,7 @@ public class NameResolver extends AstFullVisitor<Object, NameResolver.Mode> {
      * Visit method for statement expression.
      *
      * @param stmtExpr The statement expression to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode     The mode of the name resolver.
      * @return The result of the visit.
      */
     @Override
@@ -261,7 +259,7 @@ public class NameResolver extends AstFullVisitor<Object, NameResolver.Mode> {
      * Visit method for where expression.
      *
      * @param whereExpr The where expression to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode      The mode of the name resolver.
      * @return The result of the visit.
      */
     @Override
@@ -284,7 +282,7 @@ public class NameResolver extends AstFullVisitor<Object, NameResolver.Mode> {
      * Visit method for parameter declaration.
      *
      * @param parDecl The parameter declaration to visit.
-     * @param mode The mode of the name resolver.
+     * @param mode    The mode of the name resolver.
      * @return The result of the visit.
      * @throws Report.Error if the parameter is already defined.
      */

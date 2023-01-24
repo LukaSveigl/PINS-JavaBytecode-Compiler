@@ -19,11 +19,9 @@ import java.util.Vector;
  */
 public class SynAn implements AutoCloseable {
 
-	/**
-	 * lexan holds the lexical analyser ({@link LexAn}), which returns symbols of source file one by one.
-	 * currSymbol is the lookahead buffer of length 1, which holds the current symbol returned by lexan.
-	 */
+	/** The lexical analyser. */
 	private final LexAn lexan;
+	/** The current symbol (LL buffer of size 1). */
 	private Symbol currSymbol;
 	
 
@@ -467,8 +465,8 @@ public class SynAn implements AutoCloseable {
 	/**
 	 * Parse else statement.
 	 *
-	 * @param s First symbol of if statement.
-	 * @param expr AST of expression.
+	 * @param s     First symbol of if statement.
+	 * @param expr  AST of expression.
 	 * @param lStmt AST of statement.
 	 * @return AST of if(else) statement.
 	 */
@@ -510,7 +508,6 @@ public class SynAn implements AutoCloseable {
 			}
 		}
 	}
-
 
 	/**
 	 * Parse expression.

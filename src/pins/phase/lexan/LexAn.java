@@ -32,28 +32,21 @@ public class LexAn implements AutoCloseable {
 		}
 	}
 
-	/**
-	 * Location class members - used to assemble location of current symbol.
- 	 */
-	private int[] columns = {1, 1};
+	/** The lexeme starting and ending column positions. */
+	private final int[] columns = {1, 1};
+	/** The lexeme line position. */
 	private int line = 1;
 
-	/**
-	 * File processing members
-	 *
-	 * lexeme holds currently read lexeme.
-	 * buffer holds characters that have been removed in order to assemble a valid symbol.
-	 * character holds currently read character.
-	 */
+	/** The currently read lexeme. */
 	private String lexeme = "";
+	/** Characters that have been removed in order to assemble a valid symbol. */
 	private String buffer = "";
+	/** Current character. */
 	private char character = ' ';
 
-	/**
-	 * isChar is a flag that signifies that future characters read are part of character constant.
-	 * commentCount is a counter that counts comment tags (#{ = +1, }# = -1).
-	 */
+	/** Flag that signifies that coming characters read are part of a character constant. */
 	private boolean isChar = false;
+	/** Number of comment tags in source, used to check if a comment was left open. */
 	private int commentCount = 0;
 
 	/**

@@ -3,7 +3,7 @@ package pins.data.lin;
 import pins.data.mem.*;
 
 /**
- * A chuck of data.
+ * A chunk of data.
  */
 public class LinDataChunk extends LinChunk {
 

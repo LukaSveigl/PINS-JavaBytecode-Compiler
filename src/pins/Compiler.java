@@ -18,6 +18,8 @@ public class Compiler {
 	/** All phases of the compiler. */
 	private static final String phases = "none|lexan|synan|abstr|seman|memory|imcgen|imclin";
 
+	private static final String method = "interp|compile";
+
 	/** Values of command line arguments. */
 	private static HashMap<String, String> cmdLine = new HashMap<String, String>();
 
@@ -54,6 +56,12 @@ public class Compiler {
 							continue;
 						}
 					}
+					if (args[argc].matches("--cmp-method=(" + method + ")")) {
+						if (cmdLine.get("--comp-method") == null) {
+							cmdLine.put("--comp-method", args[argc].replaceFirst("^[^=]*=", ""));
+							continue;
+						}
+					}
 					Report.warning("Command line argument '" + args[argc] + "' ignored.");
 				} else {
 					// Source file name.
@@ -68,7 +76,7 @@ public class Compiler {
 				throw new Report.Error("Source file not specified.");
 			}
 			if (cmdLine.get("--dst-file-name") == null) {
-				cmdLine.put("--dst-file-name", cmdLine.get("--src-file-name").replaceFirst("\\.[^./]*$", "") + ".mms");
+				cmdLine.put("--dst-file-name", cmdLine.get("--src-file-name").replaceFirst("\\.[^./]*$", "") + ".class");
 			}
 			if ((cmdLine.get("--target-phase") == null) || (cmdLine.get("--target-phase").equals("all"))) {
 				cmdLine.put("--target-phase", phases.replaceFirst("^.*\\|", ""));
@@ -135,12 +143,20 @@ public class Compiler {
 				try (ImcLin imclin = new ImcLin()) {
 					ast.accept(new ChunkGenerator(), null);
 
-					Interpreter interpreter = new Interpreter(ImcLin.dataChunks(), ImcLin.codeChunks());
-					System.out.println("EXIT CODE: " + interpreter.run("_main"));
+					//Interpreter interpreter = new Interpreter(ImcLin.dataChunks(), ImcLin.codeChunks());
+					//System.out.println("EXIT CODE: " + interpreter.run("_main"));
 				}
 				if (cmdLine.get("--target-phase").equals("imclin"))
 					break;
-				
+
+				if (cmdLine.get("--comp-method").equals("interp")) {
+					Interpreter interpreter = new Interpreter(ImcLin.dataChunks(), ImcLin.codeChunks());
+					System.out.println("EXIT CODE: " + interpreter.run("_main"));
+					break;
+				}
+				if (cmdLine.get("--comp-method").equals("compile")) {
+					// Add compiler code.
+				}
 				break;
 
 			}
