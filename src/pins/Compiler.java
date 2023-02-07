@@ -3,6 +3,10 @@ package pins;
 import java.util.*;
 import pins.common.report.*;
 import pins.data.ast.*;
+import pins.phase.btcgen.BtcEmitter;
+import pins.phase.btcgen.BtcGen;
+import pins.phase.btcgen.ClassGenerator;
+import pins.phase.btcgen.MethodGenerator;
 import pins.phase.lexan.*;
 import pins.phase.synan.*;
 import pins.phase.seman.*;
@@ -156,6 +160,15 @@ public class Compiler {
 				}
 				if (cmdLine.get("--comp-method").equals("compile")) {
 					// Add compiler code.
+					try (BtcGen btcgen = new BtcGen()) {
+						MethodGenerator methodGenerator = new MethodGenerator();
+						methodGenerator.generate();
+						ClassGenerator classGenerator = new ClassGenerator(cmdLine.get("--dst-file-name"));
+						classGenerator.generate();
+
+						BtcEmitter btcemit = new BtcEmitter(cmdLine.get("--dst-file-name"));
+						btcemit.emit();
+					}
 				}
 				break;
 
