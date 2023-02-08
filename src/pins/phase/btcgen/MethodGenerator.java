@@ -8,7 +8,6 @@ import pins.phase.imclin.ImcLin;
  */
 public class MethodGenerator {
 
-
     /**
      * Constructs a new bytecode method generator.
      */
@@ -17,7 +16,7 @@ public class MethodGenerator {
     }
 
     /**
-     * Generates the method bytecode.
+     * Generates bytecode for all code chunks.
      */
     public void generate() {
         for (LinCodeChunk chunk : ImcLin.codeChunks()) {

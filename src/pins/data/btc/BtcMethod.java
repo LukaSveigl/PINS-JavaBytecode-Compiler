@@ -37,6 +37,15 @@ public class BtcMethod {
      *
      * @return The method instructions.
      */
+    public void addInstrs(Vector<BtcInstr> instrs) {
+        this.instrs.addAll(instrs);
+    }
+
+    /**
+     * Returns the method instructions.
+     *
+     * @return The method instructions.
+     */
     public Vector<BtcInstr> instrs() {
         return instrs;
     }
