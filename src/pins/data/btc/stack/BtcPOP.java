@@ -11,7 +11,7 @@ public class BtcPOP extends BtcInstr {
 
     /** The POP instruction kind. */
     public enum Kind {
-        POP, POP2
+        POP, POP2;
     }
 
     /** The POP instruction kind. */
