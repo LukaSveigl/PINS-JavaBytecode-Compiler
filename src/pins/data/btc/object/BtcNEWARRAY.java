@@ -26,13 +26,16 @@ public class BtcNEWARRAY extends BtcInstr {
      */
     public BtcNEWARRAY(Type type) {
         this.type = type;
+        this.opcode = 0xbc;
     }
 
     @Override
     public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+        Vector<Integer> hex = new Vector<>();
+        hex.add(opcode);
+        // The type codes start at 4.
+        hex.add(type.ordinal() + 4);
+        return hex;
     }
 
     @Override

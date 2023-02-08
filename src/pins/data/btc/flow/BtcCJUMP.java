@@ -7,7 +7,7 @@ import java.util.Vector;
 /**
  * The integer conditional jump instruction.
  *
- * Jumps to the specified instruction if the top value on the stack is 0.
+ * Jumps to the specified instruction if the top 2 values on the stack match the condition. Both values are popped.
  */
 public class BtcCJUMP extends BtcInstr {
 
@@ -31,13 +31,22 @@ public class BtcCJUMP extends BtcInstr {
     public BtcCJUMP(Oper oper, int target) {
         this.oper = oper;
         this.target = target;
+        this.opcode = switch (oper) {
+            case EQ -> 0x9f;
+            case NE -> 0xa0;
+            case LT -> 0xa1;
+            case GE -> 0xa2;
+            case GT -> 0xa3;
+            case LE -> 0xa4;
+        };
     }
 
     @Override
     public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+        Vector<Integer> hex = new Vector<>();
+        hex.add(opcode);
+        hex.add(target);
+        return hex;
     }
 
     @Override

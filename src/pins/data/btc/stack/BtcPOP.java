@@ -26,13 +26,14 @@ public class BtcPOP extends BtcInstr {
      */
     public BtcPOP(Kind kind) {
         this.kind = kind;
+        this.opcode = kind == Kind.POP ? 0x57 : 0x58;
     }
 
     @Override
     public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+        Vector<Integer> hex = new Vector<>();
+        hex.add(opcode);
+        return hex;
     }
 
     @Override

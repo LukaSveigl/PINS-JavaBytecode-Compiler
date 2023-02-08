@@ -31,13 +31,21 @@ public class BtcINVOKE extends BtcInstr {
     public BtcINVOKE(Type type, int index) {
         this.type = type;
         this.index = index;
+        this.opcode = switch (type) {
+            case VIRTUAL -> 0xb6;
+            case SPECIAL -> 0xb7;
+            case STATIC -> 0xb8;
+            case INTERFACE -> 0xb9;
+            case DYNAMIC -> 0xba;
+        };
     }
 
     @Override
     public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+        Vector<Integer> hex = new Vector<>();
+        hex.add(opcode);
+        hex.add(index);
+        return hex;
     }
 
     @Override

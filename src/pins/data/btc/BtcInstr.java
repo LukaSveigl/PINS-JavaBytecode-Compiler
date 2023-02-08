@@ -9,6 +9,9 @@ import java.util.Vector;
  */
 public abstract class BtcInstr implements Loggable {
 
+    /** The instruction opcode. */
+    protected int opcode;
+
     /**
      * Returns the hexadecimal representation of the instruction.
      *

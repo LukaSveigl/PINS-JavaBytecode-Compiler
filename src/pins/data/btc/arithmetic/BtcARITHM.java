@@ -37,13 +37,29 @@ public class BtcARITHM extends BtcInstr {
     public BtcARITHM(Oper oper, Type type) {
         this.oper = oper;
         this.type = type;
+        int opcode = 0x60; // iadd
+        opcode += switch (oper) {
+            case ADD -> 0; // 0x60 - 0x63
+            case SUB -> 4; // 0x64 - 0x67
+            case MUL -> 8; // 0x68 - 0x6b
+            case DIV -> 12; // 0x6c - 0x6f
+            case REM -> 16; // 0x70 - 0x73
+            case NEG -> 20; // 0x74 - 0x77
+        };
+        opcode += switch (type) {
+            case INT -> 0;
+            case LONG -> 1;
+            case FLOAT -> 2;
+            case DOUBLE -> 3;
+        };
+        this.opcode = opcode;
     }
 
     @Override
     public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+        Vector<Integer> hex = new Vector<>();
+        hex.add(opcode);
+        return hex;
     }
 
     @Override

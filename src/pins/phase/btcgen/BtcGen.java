@@ -1,6 +1,6 @@
 package pins.phase.btcgen;
 
-import pins.data.btc.BtcInstr;
+import pins.data.btc.BtcMethod;
 import pins.data.lin.LinCodeChunk;
 
 import java.util.HashMap;
@@ -10,8 +10,8 @@ import java.util.HashMap;
  */
 public class BtcGen implements AutoCloseable {
 
-    /** Maps linearized code chunks to bytecode instructions. */
-    private static HashMap<LinCodeChunk, BtcInstr> btcInst = new HashMap<LinCodeChunk, BtcInstr>(0);
+    /** Maps linearized code chunks to bytecode methods. */
+    private static final HashMap<LinCodeChunk, BtcMethod> btcMethods = new HashMap<LinCodeChunk, BtcMethod>(0);
 
     /**
      * Constructs a new phase for JVM bytecode generation.

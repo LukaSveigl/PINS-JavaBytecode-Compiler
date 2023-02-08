@@ -31,25 +31,34 @@ public class BtcCONST extends BtcInstr {
     public BtcCONST(long value, Type type) {
         this.value = value;
         this.type = type;
+        this.opcode = switch (type) {
+            case ICONST -> 0x10;
+            case LCONST -> 0x11;
+            case FCONST -> 0x12;
+            case DCONST -> 0x13;
+            case ACONST -> 0x14;
+        };
     }
 
     @Override
     public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+        Vector<Integer> hex = new Vector<>();
+        hex.add(opcode);
+        switch (type) {
+            case ICONST, FCONST, ACONST -> {
+                hex.add((int) value);
+            }
+            case LCONST, DCONST -> {
+                hex.add((int) value);
+                hex.add((int) (value >> 32));
+            }
+        }
+        return hex;
     }
 
     @Override
     public void log(String pfx) {
         System.out.println(pfx + type + " " + value);
-        /*switch (type) {
-            case ICONST -> System.out.println(pfx + "ICONST(" + value + ")");
-            case LCONST -> System.out.println(pfx + "LCONST(" + value + ")");
-            case FCONST -> System.out.println(pfx + "FCONST(" + value + ")");
-            case DCONST -> System.out.println(pfx + "DCONST(" + value + ")");
-            case ACONST -> System.out.println(pfx + "ACONST(" + value + ")");
-        }*/
     }
 
     @Override

@@ -26,13 +26,21 @@ public class BtcRETURN extends BtcInstr {
      */
     public BtcRETURN(Type type) {
         this.type = type;
+        this.opcode = switch (type) {
+            case IRETURN -> 0xac;
+            case LRETURN -> 0xad;
+            case FRETURN -> 0xae;
+            case DRETURN -> 0xaf;
+            case ARETURN -> 0xb0;
+            case RETURN -> 0xb1;
+        };
     }
 
     @Override
     public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+        Vector<Integer> hex = new Vector<>();
+        hex.add(opcode);
+        return hex;
     }
 
     @Override

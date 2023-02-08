@@ -41,6 +41,16 @@ public class BtcACCESS extends BtcInstr {
         this.dir = dir;
         this.type = type;
         this.index = index;
+        this.opcode = switch (dir) {
+            case GET -> switch (type) {
+                case STATIC -> 0xb2;
+                case FIELD -> 0xb4;
+            };
+            case PUT -> switch (type) {
+                case STATIC -> 0xb3;
+                case FIELD -> 0xb5;
+            };
+        };
     }
 
     @Override

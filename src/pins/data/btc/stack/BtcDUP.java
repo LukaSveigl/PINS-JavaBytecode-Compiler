@@ -26,13 +26,21 @@ public class BtcDUP extends BtcInstr {
      */
     public BtcDUP(Kind kind) {
         this.kind = kind;
+        this.opcode = switch (kind) {
+            case DUP -> 0x59;
+            case DUP_X1 -> 0x5a;
+            case DUP_X2 -> 0x5b;
+            case DUP2 -> 0x5c;
+            case DUP2_X1 -> 0x5d;
+            case DUP2_X2 -> 0x5e;
+        };
     }
 
     @Override
     public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+        Vector<Integer> hex = new Vector<>();
+        hex.add(opcode);
+        return hex;
     }
 
     @Override

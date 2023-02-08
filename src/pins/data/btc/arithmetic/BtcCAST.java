@@ -3,6 +3,7 @@ package pins.data.btc.arithmetic;
 import pins.common.report.Report;
 import pins.data.btc.BtcInstr;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -23,6 +24,9 @@ public class BtcCAST extends BtcInstr {
     /** The cast instruction destination type. */
     public final Type to;
 
+    /** The opcode lookup table. */
+    private final HashMap<Type[], Integer> opcodes = new HashMap<Type[], Integer>();
+
     /**
      * Constructs a new cast instruction.
      *
@@ -30,18 +34,21 @@ public class BtcCAST extends BtcInstr {
      * @param to   The cast instruction destination type.
      */
     public BtcCAST(Type from, Type to) {
-        if (!this.validateTypes(from, to)) {
+        if (!validateTypes(from, to)) {
             throw new Report.InternalError();
         }
         this.from = from;
         this.to = to;
+        populateOpcodeLookup();
+        // Could be done with a switch expression, but that would be too long.
+        this.opcode = opcodes.get(new Type[]{from, to});
     }
 
     @Override
     public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+        Vector<Integer> hex = new Vector<>();
+        hex.add(opcode);
+        return hex;
     }
 
     @Override
@@ -76,6 +83,27 @@ public class BtcCAST extends BtcInstr {
         }
         // Might extend later, depending on the needs.
         return false;
+    }
+
+    /**
+     * Populates the opcode lookup table.
+     */
+    private void populateOpcodeLookup() {
+        opcodes.put(new Type[]{Type.INT, Type.LONG}, 0x85);
+        opcodes.put(new Type[]{Type.INT, Type.FLOAT}, 0x86);
+        opcodes.put(new Type[]{Type.INT, Type.DOUBLE}, 0x87);
+        opcodes.put(new Type[]{Type.LONG, Type.INT}, 0x88);
+        opcodes.put(new Type[]{Type.LONG, Type.FLOAT}, 0x89);
+        opcodes.put(new Type[]{Type.LONG, Type.DOUBLE}, 0x8a);
+        opcodes.put(new Type[]{Type.FLOAT, Type.INT}, 0x8b);
+        opcodes.put(new Type[]{Type.FLOAT, Type.LONG}, 0x8c);
+        opcodes.put(new Type[]{Type.FLOAT, Type.DOUBLE}, 0x8d);
+        opcodes.put(new Type[]{Type.DOUBLE, Type.INT}, 0x8e);
+        opcodes.put(new Type[]{Type.DOUBLE, Type.LONG}, 0x8f);
+        opcodes.put(new Type[]{Type.DOUBLE, Type.FLOAT}, 0x90);
+        opcodes.put(new Type[]{Type.INT, Type.BYTE}, 0x91);
+        opcodes.put(new Type[]{Type.INT, Type.CHAR}, 0x92);
+        opcodes.put(new Type[]{Type.INT, Type.SHORT}, 0x93);
     }
 
 }

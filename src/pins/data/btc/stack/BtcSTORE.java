@@ -31,13 +31,21 @@ public class BtcSTORE extends BtcInstr {
     public BtcSTORE(int index, Kind kind) {
         this.index = index;
         this.kind = kind;
+        this.opcode = switch (kind) {
+            case ISTORE -> 0x36;
+            case LSTORE -> 0x37;
+            case FSTORE -> 0x38;
+            case DSTORE -> 0x39;
+            case ASTORE -> 0x3a;
+        };
     }
 
     @Override
     public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+        Vector<Integer> hex = new Vector<>();
+        hex.add(opcode);
+        hex.add(index);
+        return hex;
     }
 
     @Override

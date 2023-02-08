@@ -16,13 +16,14 @@ public class BtcSWAP extends BtcInstr {
      * Constructs a new SWAP instruction.
      */
     public BtcSWAP() {
+        this.opcode = 0x5f;
     }
 
     @Override
     public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+        Vector<Integer> hex = new Vector<>();
+        hex.add(opcode);
+        return hex;
     }
 
     @Override

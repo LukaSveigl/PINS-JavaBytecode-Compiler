@@ -26,13 +26,22 @@ public class BtcALOAD extends BtcInstr {
      */
     public BtcALOAD(Type type) {
         this.type = type;
+        this.opcode = switch (type) {
+            case INT -> 0x2e;
+            case LONG -> 0x2f;
+            case FLOAT -> 0x30;
+            case DOUBLE -> 0x31;
+            case BYTE -> 0x33;
+            case CHAR -> 0x34;
+            case SHORT -> 0x35;
+        };
     }
 
     @Override
     public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+        Vector<Integer> hex = new Vector<>();
+        hex.add(opcode);
+        return hex;
     }
 
     @Override

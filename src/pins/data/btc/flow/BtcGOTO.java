@@ -11,23 +11,25 @@ import java.util.Vector;
  */
 public class BtcGOTO extends BtcInstr {
 
-    /** The jump target represented as a method line number. */
+    /** The jump target represented as a method instruction index. */
     public final int target;
 
     /**
      * Constructs a new unconditional jump instruction.
      *
-     * @param target The jump target represented as a method line number.
+     * @param target The jump target represented as a method instruction index.
      */
     public BtcGOTO(int target) {
         this.target = target;
+        this.opcode = 0xa7;
     }
 
     @Override
     public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+        Vector<Integer> hex = new Vector<>();
+        hex.add(opcode);
+        hex.add(target);
+        return hex;
     }
 
     @Override

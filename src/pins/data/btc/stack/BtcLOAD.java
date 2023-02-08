@@ -31,30 +31,31 @@ public class BtcLOAD extends BtcInstr {
     public BtcLOAD(int index, Type type) {
         this.index = index;
         this.type = type;
+        this.opcode = switch (type) {
+            case ILOAD -> 0x15;
+            case LLOAD -> 0x16;
+            case FLOAD -> 0x17;
+            case DLOAD -> 0x18;
+            case ALOAD -> 0x19;
+        };
     }
 
     @Override
     public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+        Vector<Integer> hex = new Vector<>();
+        hex.add(opcode);
+        hex.add(index);
+        return hex;
     }
 
     @Override
     public void log(String pfx) {
         System.out.println(pfx + type + " " + index);
-        /*switch (type) {
-            case ILOAD -> System.out.println(pfx + "ILOAD " + index);
-            case LLOAD -> System.out.println(pfx + "LLOAD " + index);
-            case FLOAD -> System.out.println(pfx + "FLOAD " + index);
-            case DLOAD -> System.out.println(pfx + "DLOAD " + index);
-            case ALOAD -> System.out.println(pfx + "ALOAD " + index);
-        }*/
     }
 
     @Override
     public String toString() {
-        return type.toString() + " " + index;
+        return type + " " + index;
     }
 
 }
