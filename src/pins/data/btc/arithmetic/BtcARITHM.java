@@ -6,6 +6,9 @@ import java.util.Vector;
 
 /**
  * The arithmetic instruction.
+ *
+ * Performs an arithmetic operation on the top two values on the stack (or 1 in case of NEG).
+ * The result is pushed back onto the stack.
  */
 public class BtcARITHM extends BtcInstr {
 

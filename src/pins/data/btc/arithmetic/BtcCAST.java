@@ -7,6 +7,8 @@ import java.util.Vector;
 
 /**
  * The cast instruction.
+ *
+ * Casts a value on top of the stack to a different type.
  */
 public class BtcCAST extends BtcInstr {
 

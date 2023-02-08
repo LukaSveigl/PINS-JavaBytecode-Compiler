@@ -7,6 +7,9 @@ import java.util.Vector;
 
 /**
  * The long/double compare instruction.
+ *
+ * Compares the top two values on the stack. The values must be of type long or double. The result of the
+ * comparison is pushed back onto the stack as an int.
  */
 public class BtcCMP extends BtcInstr {
 

@@ -6,6 +6,8 @@ import java.util.Vector;
 
 /**
  * The return instruction.
+ *
+ * Returns from the current method.
  */
 public class BtcRETURN extends BtcInstr {
 

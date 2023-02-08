@@ -6,6 +6,8 @@ import java.util.Vector;
 
 /**
  * The integer conditional jump instruction.
+ *
+ * Jumps to the specified instruction if the top value on the stack is 0.
  */
 public class BtcCJUMP extends BtcInstr {
 

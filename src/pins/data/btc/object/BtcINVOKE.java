@@ -6,6 +6,8 @@ import java.util.Vector;
 
 /**
  * The method invoke instruction.
+ *
+ * Invokes a method.
  */
 public class BtcINVOKE extends BtcInstr {
 

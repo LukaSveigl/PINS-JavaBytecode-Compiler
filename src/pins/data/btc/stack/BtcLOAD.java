@@ -6,6 +6,8 @@ import java.util.Vector;
 
 /**
  * The LOAD instruction.
+ *
+ * Loads a value from a local variable.
  */
 public class BtcLOAD extends BtcInstr {
 

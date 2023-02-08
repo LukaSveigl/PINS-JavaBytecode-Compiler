@@ -6,6 +6,8 @@ import java.util.Vector;
 
 /**
  * The member access instruction.
+ *
+ * Loads a value from a class field.
  */
 public class BtcACCESS extends BtcInstr {
 

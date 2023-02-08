@@ -6,6 +6,8 @@ import java.util.Vector;
 
 /**
  * The bitwise instruction.
+ *
+ * Performs a bitwise operation on the top two values on the stack. The result is pushed back onto the stack.
  */
 public class BtcBITWISE extends BtcInstr {
 

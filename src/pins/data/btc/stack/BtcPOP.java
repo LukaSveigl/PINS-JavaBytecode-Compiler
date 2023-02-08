@@ -6,6 +6,8 @@ import java.util.Vector;
 
 /**
  * The POP instruction.
+ *
+ * Pops the top value (or 2 values) from the stack.
  */
 public class BtcPOP extends BtcInstr {
 

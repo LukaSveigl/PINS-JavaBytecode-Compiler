@@ -4,6 +4,11 @@ import pins.data.btc.BtcInstr;
 
 import java.util.Vector;
 
+/**
+ * The array store instruction.
+ *
+ * Stores a value into an array.
+ */
 public class BtcASTORE extends BtcInstr {
 
     /** The type of the array. */

@@ -6,6 +6,9 @@ import java.util.Vector;
 
 /**
  * The SWAP instruction.
+ *
+ * Swaps the top two values on the stack. Must not be used unless the top two values are both values of
+ * a category 1 computational type (not long or double).
  */
 public class BtcSWAP extends BtcInstr {
 

@@ -6,6 +6,8 @@ import java.util.Vector;
 
 /**
  * The constant instruction.
+ *
+ * Pushes a constant value of type int, float, long, double or Object onto the stack.
  */
 public class BtcCONST extends BtcInstr {
 

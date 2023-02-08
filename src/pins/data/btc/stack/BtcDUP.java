@@ -6,6 +6,8 @@ import java.util.Vector;
 
 /**
  * The DUP instruction.
+ *
+ * Duplicates the value on top of the stack.
  */
 public class BtcDUP extends BtcInstr {
 

@@ -6,6 +6,8 @@ import java.util.Vector;
 
 /**
  * The unconditional jump instruction.
+ *
+ * Jumps to the specified instruction.
  */
 public class BtcGOTO extends BtcInstr {
 

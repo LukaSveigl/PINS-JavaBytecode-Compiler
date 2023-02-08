@@ -6,6 +6,8 @@ import java.util.Vector;
 
 /**
  * The new array instruction.
+ *
+ * Creates a new array. The size of the array is popped from the stack. The array reference is pushed back.
  */
 public class BtcNEWARRAY extends BtcInstr {
 

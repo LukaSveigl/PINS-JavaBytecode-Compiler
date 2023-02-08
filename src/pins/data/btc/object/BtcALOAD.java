@@ -6,6 +6,8 @@ import java.util.Vector;
 
 /**
  * The array load instruction.
+ *
+ * Loads a value from an array.
  */
 public class BtcALOAD extends BtcInstr {
 

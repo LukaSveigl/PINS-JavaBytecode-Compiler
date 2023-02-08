@@ -6,6 +6,8 @@ import java.util.Vector;
 
 /**
  * The STORE instruction.
+ *
+ * Stores the top value on the stack into a local variable.
  */
 public class BtcSTORE extends BtcInstr {
 
