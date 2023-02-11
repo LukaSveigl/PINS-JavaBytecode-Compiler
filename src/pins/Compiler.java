@@ -3,6 +3,10 @@ package pins;
 import java.util.*;
 import pins.common.report.*;
 import pins.data.ast.*;
+import pins.data.btc.BtcMethod;
+import pins.data.btc.vars.BtcVar;
+import pins.data.imc.code.stmt.ImcStmt;
+import pins.data.lin.LinCodeChunk;
 import pins.phase.btcgen.BtcEmitter;
 import pins.phase.btcgen.BtcGen;
 import pins.phase.btcgen.ClassGenerator;
@@ -20,8 +24,9 @@ import pins.phase.imclin.*;
 public class Compiler {
 
 	/** All phases of the compiler. */
-	private static final String phases = "none|lexan|synan|abstr|seman|memory|imcgen|imclin";
+	private static final String phases = "none|lexan|synan|abstr|seman|memory|imcgen|imclin|btcgen";
 
+	/** The compilation method. */
 	private static final String method = "interp|compile";
 
 	/** Values of command line arguments. */
@@ -60,7 +65,7 @@ public class Compiler {
 							continue;
 						}
 					}
-					if (args[argc].matches("--cmp-method=(" + method + ")")) {
+					if (args[argc].matches("--comp-method=(" + method + ")")) {
 						if (cmdLine.get("--comp-method") == null) {
 							cmdLine.put("--comp-method", args[argc].replaceFirst("^[^=]*=", ""));
 							continue;
@@ -85,6 +90,8 @@ public class Compiler {
 			if ((cmdLine.get("--target-phase") == null) || (cmdLine.get("--target-phase").equals("all"))) {
 				cmdLine.put("--target-phase", phases.replaceFirst("^.*\\|", ""));
 			}
+
+			cmdLine.putIfAbsent("--comp-method", "interp");
 
 			// The compilation process carried out phase by phase.
 			while (true) {
@@ -159,16 +166,32 @@ public class Compiler {
 					break;
 				}
 				if (cmdLine.get("--comp-method").equals("compile")) {
-					// Add compiler code.
 					try (BtcGen btcgen = new BtcGen()) {
 						MethodGenerator methodGenerator = new MethodGenerator();
 						methodGenerator.generate();
+
+						ast.accept(new MethodGenerator(), null);
+
+						for (BtcMethod btcMethod : BtcGen.btcMethods.values()) {
+							btcMethod.log("");
+							System.out.println();
+						}
+
+						for (BtcVar btcLocal : BtcGen.btcLocals.values()) {
+							btcLocal.log("");
+						}
+
+						for (BtcVar btcField : BtcGen.btcFields.values()) {
+							btcField.log("");
+						}
+
 						ClassGenerator classGenerator = new ClassGenerator(cmdLine.get("--dst-file-name"));
 						classGenerator.generate();
 
 						BtcEmitter btcemit = new BtcEmitter(cmdLine.get("--dst-file-name"));
 						btcemit.emit();
 					}
+					break;
 				}
 				break;
 

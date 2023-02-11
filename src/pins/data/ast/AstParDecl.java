@@ -3,7 +3,7 @@ package pins.data.ast;
 import pins.common.report.*;
 import pins.data.ast.visitor.AstVisitor;
 
-/*
+/**
  * A parameter declaration.
  */
 public class AstParDecl extends AstDecl {

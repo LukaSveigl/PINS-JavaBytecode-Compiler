@@ -1,5 +1,7 @@
 package pins.data.btc;
 
+import pins.data.btc.vars.BtcField;
+
 import java.util.Vector;
 
 /**
@@ -12,6 +14,8 @@ public class BtcClass {
 
     /** The class methods. */
     private final Vector<BtcMethod> methods;
+
+    private final Vector<BtcField> fields;
 
     /** The JVM class magic string. */
     public final String magicString = "CAFEBABE";
@@ -32,6 +36,7 @@ public class BtcClass {
     public BtcClass(String name) {
         this.name = name;
         this.methods = new Vector<>();
+        this.fields = new Vector<>();
     }
 
     /**
@@ -50,6 +55,24 @@ public class BtcClass {
      */
     public Vector<BtcMethod> methods() {
         return methods;
+    }
+
+    /**
+     * Adds a field to the class.
+     *
+     * @param field The field to add.
+     */
+    public void addField(BtcField field) {
+        fields.add(field);
+    }
+
+    /**
+     * Returns the class fields.
+     *
+     * @return The class fields.
+     */
+    public Vector<BtcField> fields() {
+        return fields;
     }
 
     /**

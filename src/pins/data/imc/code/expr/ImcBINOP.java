@@ -43,7 +43,7 @@ public class ImcBINOP extends ImcExpr {
 
 	@Override
 	public void log(String pfx) {
-		System.out.println(pfx + "BINOP");
+		System.out.println(pfx + "BINOP(" + oper + ")");
 		fstExpr.log(pfx + "  ");
 		sndExpr.log(pfx + "  ");
 	}
