@@ -25,7 +25,7 @@ public class SemName extends SemType {
 	/**
 	 * Defines the type this named type represents.
 	 * 
-	 * @param typeThe type this named type represents.
+	 * @param type The type this named type represents.
 	 */
 	public void define(SemType type) {
 		if (this.type != null)

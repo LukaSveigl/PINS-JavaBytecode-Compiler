@@ -20,7 +20,7 @@ public class BtcNEWARRAY extends BtcInstr {
     public final Type type;
 
     /**
-     * Constructs a new new array instruction.
+     * Constructs a new newarray instruction.
      *
      * @param type The type of the array.
      */

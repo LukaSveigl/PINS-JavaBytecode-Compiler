@@ -103,7 +103,7 @@ public class LexAn implements AutoCloseable {
 				}
 			}
 
-			// Return last symbol in file, if exists. Otherwise return EOF symbol.
+			// Return last symbol in file, if exists. Otherwise, return EOF symbol.
 			return terminate();
 
 		} catch (IOException __) {

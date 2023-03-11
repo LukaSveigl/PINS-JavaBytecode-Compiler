@@ -57,13 +57,11 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
         for (AST ast : asts.asts()) {
             if (ast instanceof AstVarDecl) {
                 MemAccess access = Memory.varAccesses.get(ast);
-                if (access instanceof MemRelAccess) {
-                    ast.accept(this, btcMethod);
+                if (access instanceof MemAbsAccess) {
+                    continue;
                 }
-            } else {
-                ast.accept(this, btcMethod);
             }
-            //ast.accept(this, btcMethod);
+            ast.accept(this, btcMethod);
         }
         return null;
     }
@@ -102,6 +100,7 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
         }
         funDecl.expr.accept(this, btcMethod);
         // If no return statement (for example, last stmt in void method is assign), artificially add one.
+        // This is only needed for void methods, as the return for other types is enforced by the semantic analyzer.
         if (btcMethod.type == BtcMethod.Type.VOID) {
             if (btcMethod.instrs().size() == 0 || !(btcMethod.instrs().get(btcMethod.instrs().size() - 1) instanceof BtcRETURN)) {
                 btcMethod.instrs().add(new BtcRETURN(BtcRETURN.Type.RETURN));
@@ -133,20 +132,17 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
         } else if (SemAn.describesType.get(varDecl.type) instanceof SemChar) {
             type = BtcVar.Type.CHAR;
             offset += 1;
-        } else {
-            // Ignore
         }
 
         if (Memory.varAccesses.get(varDecl) instanceof MemAbsAccess) {
-            BtcGen.btcFields.put((MemAbsAccess) Memory.varAccesses.get(varDecl), new BtcField(varDecl.name, type,
-                                                                                              fieldCounter));
+            BtcGen.btcFields.put((MemAbsAccess) Memory.varAccesses.get(varDecl),
+                                 new BtcField(varDecl.name, type, fieldCounter));
+            // TODO: The counters should be refactored into the method.
             fieldCounter++;
         } else {
             BtcGen.btcLocals.put((MemRelAccess) Memory.varAccesses.get(varDecl), new BtcLocal(type, localCounter));
-            if (BtcGen.methodLocals.get(btcMethod) == null) {
-                BtcGen.methodLocals.put(btcMethod, new HashSet<BtcLocal>());
-            }
-            BtcGen.methodLocals.get(btcMethod).add(BtcGen.btcLocals.get(varDecl));
+            BtcGen.methodLocals.computeIfAbsent(btcMethod, k -> new HashSet<BtcLocal>());
+            BtcGen.methodLocals.get(btcMethod).add(BtcGen.btcLocals.get((MemRelAccess) Memory.varAccesses.get(varDecl)));
             localCounter += offset;
 
         }
@@ -169,14 +165,10 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
         } else if (SemAn.describesType.get(parDecl.type) instanceof SemChar) {
             type = BtcVar.Type.CHAR;
             localCounter++;
-        } else {
-            // Ignore
         }
         BtcLocal btcLocal = new BtcLocal(type, index);
         BtcGen.btcLocals.put(Memory.parAccesses.get(parDecl), btcLocal);
-        if (BtcGen.methodLocals.get(btcMethod) == null) {
-            BtcGen.methodLocals.put(btcMethod, new HashSet<BtcLocal>());
-        }
+        BtcGen.methodLocals.computeIfAbsent(btcMethod, k -> new HashSet<BtcLocal>());
         BtcGen.methodLocals.get(btcMethod).add(btcLocal);
         return null;
     }
@@ -298,8 +290,6 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
                         kind = BtcSTORE.Kind.LSTORE;
                     } else if (SemAn.exprOfType.get(assignStmt.fstSubExpr) instanceof SemChar) {
                         kind = BtcSTORE.Kind.ISTORE;
-                    } else {
-                        // Ignore
                     }
                     btcInstr = new BtcSTORE(kind, BtcGen.btcLocals.get((MemRelAccess) access).index);
                 }
@@ -309,14 +299,10 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
                     kind = BtcSTORE.Kind.LSTORE;
                 } else if (SemAn.exprOfType.get(assignStmt.fstSubExpr) instanceof SemChar) {
                     kind = BtcSTORE.Kind.ISTORE;
-                } else {
-                    // Ignore
                 }
-                MemRelAccess access = (MemRelAccess) Memory.parAccesses.get(decl);
-                btcInstr = new BtcSTORE(kind, BtcGen.btcLocals.get((MemRelAccess) access).index);
+                MemRelAccess access = Memory.parAccesses.get(decl);
+                btcInstr = new BtcSTORE(kind, BtcGen.btcLocals.get(access).index);
             }
-        } else {
-            // Ignore
         }
         assignStmt.sndSubExpr.accept(this, btcMethod);
         btcMethod.addInstr(btcInstr);
@@ -340,8 +326,6 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
             btcInstr = new BtcCONST(((ImcCONST) ImcGen.exprImc.get(constExpr)).value, BtcCONST.Type.LONG);
         } else if (SemAn.exprOfType.get(constExpr) instanceof SemChar) {
             btcInstr = new BtcPUSH(((ImcCONST) ImcGen.exprImc.get(constExpr)).value, BtcPUSH.Type.BYTE);
-        } else {
-            // Ignore
         }
         btcMethod.addInstr(btcInstr);
         lineCounter++;
@@ -379,8 +363,6 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
             type = BtcLOAD.Type.LLOAD;
         } else if (SemAn.exprOfType.get(nameExpr) instanceof SemChar) {
             type = BtcLOAD.Type.ILOAD;
-        } else {
-            // Ignore
         }
 
         BtcInstr btcInstr = new BtcLOAD(BtcGen.btcLocals.get((MemRelAccess) access).index, type);
@@ -407,8 +389,6 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
             atype = BtcARITHM.Type.LONG;
         } else if (SemAn.exprOfType.get(binExpr) instanceof SemChar) {
             atype = BtcARITHM.Type.INT;
-        } else {
-            // Ignore
         }
 
         // Arithmetic expression.
@@ -452,9 +432,6 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
             btcMethod.addInstr(btcInstr);
             lineCounter++;
             return btcInstr;
-        } else {
-            // TODO: Implement for other datatypes.
-            // Ignore
         }
 
         return null;
@@ -477,8 +454,6 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
                     btcInstr = new BtcARITHM(BtcARITHM.Oper.NEG, BtcARITHM.Type.LONG);
                 } else if (SemAn.exprOfType.get(preExpr) instanceof SemChar) {
                     btcInstr = new BtcARITHM(BtcARITHM.Oper.NEG, BtcARITHM.Type.INT);
-                } else {
-                    // Ignore
                 }
             }
             // TODO: Implement other operators.
@@ -531,16 +506,12 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
             from = BtcCAST.Type.LONG;
         } else if (SemAn.exprOfType.get(castExpr.subExpr) instanceof SemChar) {
             from = BtcCAST.Type.CHAR;
-        } else {
-            // Ignore
         }
 
         if (SemAn.describesType.get(castExpr.type) instanceof SemInt) {
             to = BtcCAST.Type.LONG;
         } else if (SemAn.describesType.get(castExpr.type) instanceof SemChar) {
             to = BtcCAST.Type.CHAR;
-        } else {
-            // Ignore
         }
 
         castExpr.subExpr.accept(this, btcMethod);
@@ -585,8 +556,6 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
                 type = BtcRETURN.Type.LRETURN;
             } else if (SemAn.exprOfType.get(((AstExprStmt) lastStmt).expr) instanceof SemChar) {
                 type = BtcRETURN.Type.IRETURN;
-            } else {
-                // Ignore
             }
             BtcInstr btcInstr = new BtcRETURN(type);
             btcMethod.addInstr(btcInstr);
