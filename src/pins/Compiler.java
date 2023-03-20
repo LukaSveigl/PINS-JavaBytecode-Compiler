@@ -167,8 +167,8 @@ public class Compiler {
 				}
 				if (cmdLine.get("--comp-method").equals("compile")) {
 					try (BtcGen btcgen = new BtcGen()) {
-						// MethodGenerator methodGenerator = new MethodGenerator();
-						// methodGenerator.generate();
+						//MethodGenerator methodGenerator = new MethodGenerator();
+						//methodGenerator.generate();
 
 						ast.accept(new MethodGenerator(), null);
 

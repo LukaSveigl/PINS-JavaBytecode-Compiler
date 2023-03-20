@@ -46,7 +46,7 @@ public class ExprGenerator implements AstVisitor<ImcExpr, Stack<MemFrame>> {
 		ImcSEXPR sexpr = null;
 
 		// If the last statement in the statement expression is a return statement, then the statement expression's
-		// value is the return value of the last statement. Otherwise the statement expression's value is a 0 constant.
+		// value is the return value of the last statement. Otherwise, the statement expression's value is a 0 constant.
 		if (stmts.stmts.get(stmts.stmts.size() - 1) instanceof ImcESTMT) {
 			ImcESTMT retStmt = (ImcESTMT) stmts.stmts.get(stmts.stmts.size() - 1);
 			stmts.stmts.remove(stmts.stmts.size() - 1);
@@ -178,7 +178,7 @@ public class ExprGenerator implements AstVisitor<ImcExpr, Stack<MemFrame>> {
 		Vector<ImcExpr> args = new Vector<>();
 		Vector<Long> offs = new Vector<>();
 
-		// Find the called function's stack frame and get it's label.
+		// Find the called function's stack frame and get its label.
 		MemFrame funFrame = Memory.frames.get((AstFunDecl) SemAn.declaredAt.get(callExpr));
 		MemLabel label = funFrame.label;
 		ImcTEMP FP = new ImcTEMP(frames.peek().FP);
