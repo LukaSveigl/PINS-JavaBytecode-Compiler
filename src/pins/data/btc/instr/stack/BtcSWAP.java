@@ -16,7 +16,7 @@ public class BtcSWAP extends BtcInstr {
      * Constructs a new SWAP instruction.
      */
     public BtcSWAP() {
-        this.opcode = 0x5f;
+        this.opcode = BtcInstr.opcodes.get("SWAP");
     }
 
     @Override

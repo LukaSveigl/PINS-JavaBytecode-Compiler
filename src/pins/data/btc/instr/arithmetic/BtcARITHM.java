@@ -37,7 +37,7 @@ public class BtcARITHM extends BtcInstr {
     public BtcARITHM(Oper oper, Type type) {
         this.oper = oper;
         this.type = type;
-        int opcode = 0x60; // iadd
+        /*int opcode = 0x60; // iadd
         opcode += switch (oper) {
             case ADD -> 0; // 0x60 - 0x63
             case SUB -> 4; // 0x64 - 0x67
@@ -52,7 +52,8 @@ public class BtcARITHM extends BtcInstr {
             case FLOAT -> 2;
             case DOUBLE -> 3;
         };
-        this.opcode = opcode;
+        this.opcode = opcode;*/
+        this.opcode = BtcInstr.opcodes.get(type.toString().charAt(0) + oper.toString());
     }
 
     @Override

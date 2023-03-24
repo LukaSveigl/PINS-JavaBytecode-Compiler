@@ -27,12 +27,12 @@ public class BtcRETURN extends BtcInstr {
     public BtcRETURN(Type type) {
         this.type = type;
         this.opcode = switch (type) {
-            case IRETURN -> 0xac;
-            case LRETURN -> 0xad;
-            case FRETURN -> 0xae;
-            case DRETURN -> 0xaf;
-            case ARETURN -> 0xb0;
-            case RETURN -> 0xb1;
+            case IRETURN -> BtcInstr.opcodes.get("IRETURN");
+            case LRETURN -> BtcInstr.opcodes.get("LRETURN");
+            case FRETURN -> BtcInstr.opcodes.get("FRETURN");
+            case DRETURN -> BtcInstr.opcodes.get("DRETURN");
+            case ARETURN -> BtcInstr.opcodes.get("ARETURN");
+            case RETURN -> BtcInstr.opcodes.get("RETURN");
         };
     }
 

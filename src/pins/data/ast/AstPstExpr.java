@@ -4,7 +4,7 @@ import pins.common.report.*;
 import pins.data.ast.visitor.AstVisitor;
 
 /**
- * A prefix expression.
+ * A postfix expression.
  */
 public class AstPstExpr extends AstExpr {
 

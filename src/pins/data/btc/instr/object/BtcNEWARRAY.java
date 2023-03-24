@@ -13,20 +13,27 @@ public class BtcNEWARRAY extends BtcInstr {
 
     /** The type of the array. */
     public enum Type {
-        T_BOOLEAN, T_CHAR, T_FLOAT, T_DOUBLE, T_BYTE, T_SHORT, T_INT, T_LONG
+        T_BOOLEAN, T_CHAR, T_FLOAT, T_DOUBLE, T_BYTE, T_SHORT, T_INT, T_LONG, T_REF, T_MULTI
     }
 
     /** The type of the array. */
     public final Type type;
 
     /**
-     * Constructs a new newarray instruction.
+     * Constructs a new NEWARRAY instruction.
      *
      * @param type The type of the array.
      */
     public BtcNEWARRAY(Type type) {
         this.type = type;
-        this.opcode = 0xbc;
+        if (type == Type.T_REF) {
+            this.opcode = BtcInstr.opcodes.get("ANEWARRAY");
+        } else if (type == Type.T_MULTI) {
+            this.opcode = BtcInstr.opcodes.get("MULTIANEWARRAY");
+        } else {
+            this.opcode = BtcInstr.opcodes.get("NEWARRAY");
+        }
+        //this.opcode = 0xbc;
     }
 
     @Override
@@ -45,6 +52,12 @@ public class BtcNEWARRAY extends BtcInstr {
 
     @Override
     public String toString() {
-        return "NEWARRAY " + type.toString().charAt(2);
+        String instruction = BtcInstr.getInstructionFromOpcode(this.opcode);
+        if (instruction.equals("NEWARRAY")) {
+            return instruction + " " + type.toString().charAt(2);
+        } else {
+            return instruction;
+        }
+        //return "NEWARRAY " + type.toString().charAt(2);
     }
 }

@@ -43,12 +43,12 @@ public class BtcACCESS extends BtcInstr {
         this.index = index;
         this.opcode = switch (dir) {
             case GET -> switch (type) {
-                case STATIC -> 0xb2;
-                case FIELD -> 0xb4;
+                case STATIC -> BtcInstr.opcodes.get("GETSTATIC");
+                case FIELD -> BtcInstr.opcodes.get("GETFIELD");
             };
             case PUT -> switch (type) {
-                case STATIC -> 0xb3;
-                case FIELD -> 0xb5;
+                case STATIC -> BtcInstr.opcodes.get("PUTSTATIC");
+                case FIELD -> BtcInstr.opcodes.get("PUTFIELD");
             };
         };
     }

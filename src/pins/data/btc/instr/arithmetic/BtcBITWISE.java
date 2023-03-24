@@ -36,7 +36,7 @@ public class BtcBITWISE extends BtcInstr {
     public BtcBITWISE(Oper oper, Type type) {
         this.oper = oper;
         this.type = type;
-        int opcode = 0x78; // ishl
+        /*int opcode = 0x78; // ishl
         opcode += switch (oper) {
             case SHL -> 0; // 0x78 - 0x79
             case SHR -> 2; // 0x7a - 0x7b
@@ -49,7 +49,8 @@ public class BtcBITWISE extends BtcInstr {
             case INT -> 0;
             case LONG -> 1;
         };
-        this.opcode = opcode;
+        this.opcode = opcode;*/
+        this.opcode = BtcInstr.opcodes.get(type.toString().charAt(0) + oper.toString());
     }
 
     @Override

@@ -32,11 +32,11 @@ public class BtcLOAD extends BtcInstr {
         this.index = index;
         this.type = type;
         this.opcode = switch (type) {
-            case ILOAD -> 0x15;
-            case LLOAD -> 0x16;
-            case FLOAD -> 0x17;
-            case DLOAD -> 0x18;
-            case ALOAD -> 0x19;
+            case ILOAD -> BtcInstr.opcodes.get("ILOAD");
+            case LLOAD -> BtcInstr.opcodes.get("LLOAD");
+            case FLOAD -> BtcInstr.opcodes.get("FLOAD");
+            case DLOAD -> BtcInstr.opcodes.get("DLOAD");
+            case ALOAD -> BtcInstr.opcodes.get("ALOAD");
         };
     }
 

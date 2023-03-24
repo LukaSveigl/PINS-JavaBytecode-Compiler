@@ -2,6 +2,7 @@ package pins.data.btc.instr.stack;
 
 import pins.data.btc.instr.BtcInstr;
 
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -11,22 +12,47 @@ import java.util.Vector;
  */
 public class BtcLDC extends BtcInstr {
 
+    /** The instruction type. */
+    public enum Type {
+        DEFAULT, LONG
+    }
+
     /** The item run-time constant pool index. */
     public final int index;
+
+    /** The instruction type. */
+    public final Type type;
 
     /**
      * Constructs a new LDC instruction.
      *
      * @param index The item run-time constant pool index.
      */
-    public BtcLDC(int index) {
+    public BtcLDC(int index, Type type) {
         this.index = index;
-        // Choose the opcode based on the index value. If the index is in the range 0-255, use the
-        // LDC instruction. Otherwise, use the LDC_W instruction.
-        if (index <= 0xff) {
-            this.opcode = 0x12;
+        this.type = type;
+
+        /*if (type == Type.DEFAULT) {
+            // Choose the opcode based on the index value. If the index is in the range 0-255, use the
+            // LDC instruction. Otherwise, use the LDC_W instruction.
+            if (index <= 0xff) {
+                this.opcode = 0x12; // LDC
+            } else {
+                this.opcode = 0x13; // LDC_W
+            }
+        }
+        else {
+            this.opcode = 0x14; // LDC2_W
+        }*/
+
+        if (type == Type.DEFAULT) {
+            if (index <= 0xff) {
+                this.opcode = BtcInstr.opcodes.get("LDC");
+            } else {
+                this.opcode = BtcInstr.opcodes.get("LDC_W");
+            }
         } else {
-            this.opcode = 0x13;
+            this.opcode = BtcInstr.opcodes.get("LDC2_W");
         }
     }
 
@@ -50,11 +76,7 @@ public class BtcLDC extends BtcInstr {
 
     @Override
     public String toString() {
-        if (opcode == 0x12) {
-            return "LDC " + index;
-        } else {
-            return "LDC_W " + index;
-        }
+        return BtcInstr.getInstructionFromOpcode(this.opcode) + " " +  index;
     }
 
 }

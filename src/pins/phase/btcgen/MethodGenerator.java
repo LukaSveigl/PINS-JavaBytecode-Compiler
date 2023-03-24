@@ -37,14 +37,15 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
 
     /**
      * The general purpose visit method, that first resolves global variables and then everything else. That is because
-     * the global variables represent the fields of the class, and they need to be resolved first.
+     * the global variables represent the fields of the class, and they need to be resolved first, in case they are
+     * accessed by the methods.
      *
      * @param asts      The ASTs to visit.
      * @param btcMethod The current bytecode method.
      * @return The bytecode instructions.
      */
     public BtcInstr visit(ASTs<?> asts, BtcMethod btcMethod) {
-        // On first pass resolve global variable declarations.
+        // First pass: resolve global variable declarations.
         for (AST ast : asts.asts()) {
             if (ast instanceof AstVarDecl) {
                 MemAccess access = Memory.varAccesses.get(ast);
@@ -53,7 +54,7 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
                 }
             }
         }
-        // On second pass resolve everything else.
+        // Second pass: resolve everything else.
         for (AST ast : asts.asts()) {
             if (ast instanceof AstVarDecl) {
                 MemAccess access = Memory.varAccesses.get(ast);
@@ -260,8 +261,8 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
      * @return The bytecode instructions.
      */
     public BtcInstr visit(AstExprStmt exprStmt, BtcMethod btcMethod) {
-        exprStmt.expr.accept(this, btcMethod);
-        return null;
+        BtcInstr btcInstr = exprStmt.expr.accept(this, btcMethod);
+        return btcInstr;
     }
 
     /**
@@ -446,7 +447,7 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
      * @return The bytecode instructions.
      */
     public BtcInstr visit(AstPreExpr preExpr, BtcMethod btcMethod) {
-        preExpr.subExpr.accept(this, btcMethod);
+        BtcInstr subInstr = preExpr.subExpr.accept(this, btcMethod);
         BtcInstr btcInstr = null;
         switch (preExpr.oper) {
             case SUB -> {
@@ -455,6 +456,22 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
                 } else if (SemAn.exprOfType.get(preExpr) instanceof SemChar) {
                     btcInstr = new BtcARITHM(BtcARITHM.Oper.NEG, BtcARITHM.Type.INT);
                 }
+            }
+            case NOT -> {
+
+            }
+            case NEW -> {
+                if (SemAn.exprOfType.get(preExpr) instanceof SemInt) {
+                    btcInstr = new BtcNEWARRAY(BtcNEWARRAY.Type.T_LONG);
+                } else if (SemAn.exprOfType.get(preExpr) instanceof SemChar) {
+                    btcInstr = new BtcNEWARRAY(BtcNEWARRAY.Type.T_CHAR);
+                }
+            }
+            case DEL -> {
+                // Ignore.
+            }
+            case PTR -> {
+                // TODO: Implement referencing.
             }
             // TODO: Implement other operators.
         }
@@ -472,8 +489,8 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
      * @return The bytecode instructions.
      */
     public BtcInstr visit(AstPstExpr pstExpr, BtcMethod btcMethod) {
-        pstExpr.subExpr.accept(this, btcMethod);
-        return null;
+        BtcInstr btcInstr = pstExpr.subExpr.accept(this, btcMethod);
+        return btcInstr;
     }
 
     /**

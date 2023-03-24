@@ -41,7 +41,8 @@ public class BtcCAST extends BtcInstr {
         this.to = to;
         populateOpcodeLookup();
         // Could be done with a switch expression, but that would be too long.
-        this.opcode = opcodes.get(new Type[]{from, to});
+        //this.opcode = opcodes.get(new Type[]{from, to});
+        this.opcode = BtcInstr.opcodes.get(from.toString().charAt(0) + "2" + to.toString().charAt(0));
     }
 
     @Override
@@ -70,7 +71,9 @@ public class BtcCAST extends BtcInstr {
      */
     private boolean validateTypes(Type from, Type to) {
         if (from == Type.INT) {
-            return true;
+            if (!(to == Type.INT)) {
+                return true;
+            }
         }
         if (from == Type.LONG) {
             return to == Type.INT || to == Type.FLOAT || to == Type.DOUBLE;

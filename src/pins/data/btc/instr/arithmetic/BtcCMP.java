@@ -44,7 +44,7 @@ public class BtcCMP extends BtcInstr {
         }
         this.oper = oper;
         this.type = type;
-        int opcode = 0x94; // lcmp
+        /*int opcode = 0x94; // lcmp
         opcode += switch (oper) {
             case CMP -> 0; // 0x94
             case CMPL -> 1; // 0x95 or 0x97
@@ -54,7 +54,8 @@ public class BtcCMP extends BtcInstr {
             case LONG, FLOAT -> 0;
             case DOUBLE -> 2;
         };
-        this.opcode = opcode;
+        this.opcode = opcode;*/
+        this.opcode = BtcInstr.opcodes.get(type.toString().charAt(0) + oper.toString());
     }
 
     @Override

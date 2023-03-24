@@ -27,13 +27,13 @@ public class BtcALOAD extends BtcInstr {
     public BtcALOAD(Type type) {
         this.type = type;
         this.opcode = switch (type) {
-            case INT -> 0x2e;
-            case LONG -> 0x2f;
-            case FLOAT -> 0x30;
-            case DOUBLE -> 0x31;
-            case BYTE -> 0x33;
-            case CHAR -> 0x34;
-            case SHORT -> 0x35;
+            case INT -> BtcInstr.opcodes.get("IALOAD");
+            case LONG -> BtcInstr.opcodes.get("LALOAD");
+            case FLOAT -> BtcInstr.opcodes.get("FALOAD");
+            case DOUBLE -> BtcInstr.opcodes.get("DALOAD");
+            case BYTE -> BtcInstr.opcodes.get("BALOAD");
+            case CHAR -> BtcInstr.opcodes.get("CALOAD");
+            case SHORT -> BtcInstr.opcodes.get("SALOAD");
         };
     }
 

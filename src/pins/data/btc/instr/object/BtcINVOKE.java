@@ -32,11 +32,11 @@ public class BtcINVOKE extends BtcInstr {
         this.type = type;
         this.index = index;
         this.opcode = switch (type) {
-            case VIRTUAL -> 0xb6;
-            case SPECIAL -> 0xb7;
-            case STATIC -> 0xb8;
-            case INTERFACE -> 0xb9;
-            case DYNAMIC -> 0xba;
+            case VIRTUAL -> BtcInstr.opcodes.get("INVOKEVIRTUAL");
+            case SPECIAL -> BtcInstr.opcodes.get("INVOKESPECIAL");
+            case STATIC -> BtcInstr.opcodes.get("INVOKESTATIC");
+            case INTERFACE -> BtcInstr.opcodes.get("INVOKEINTERFACE");
+            case DYNAMIC -> BtcInstr.opcodes.get("INVOKEDYNAMIC");
         };
     }
 

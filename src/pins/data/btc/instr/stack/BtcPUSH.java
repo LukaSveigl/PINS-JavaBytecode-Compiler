@@ -32,8 +32,8 @@ public class BtcPUSH extends BtcInstr {
         this.value = value;
         this.type = type;
         this.opcode = switch (type) {
-            case BYTE -> 0x10;
-            case SHORT -> 0x11;
+            case BYTE -> BtcInstr.opcodes.get("BIPUSH");
+            case SHORT -> BtcInstr.opcodes.get("SIPUSH");
         };
     }
 

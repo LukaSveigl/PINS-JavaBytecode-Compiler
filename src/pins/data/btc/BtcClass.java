@@ -2,6 +2,7 @@ package pins.data.btc;
 
 import pins.data.btc.vars.BtcField;
 
+import java.nio.ByteBuffer;
 import java.util.Vector;
 
 /**
@@ -12,21 +13,50 @@ public class BtcClass {
     /** The class name. */
     public final String name;
 
+    /** The class magic number. */
+    private final int magicNumber = 0xCAFEBABE;
+
+    /** The class minor version number. */
+    private final int minorVersion = 0;
+
+    /** The class major version number. */
+    private final int majorVersion = 61;
+
+    /** The class constant pool. */
+    private final BtcConstPool constPool = new BtcConstPool();
+
+    /** The class access modifiers.*/
+    private final int accessModifiers = 0x0001 | 0x0010 | 0x1000; // Public, Final, Synthetic
+
+    /** The class constant pool index. */
+    private final int constPoolClassIndex = 0;
+
+    /** The superclass constant pool index. */
+    private final int constPoolSuperclassIndex = 0;
+
+    /** The number of interfaces. */
+    private int intefaceCount = 0;
+
+    /** The class interfaces. */
+    private final Vector<String> interfaces = new Vector<>();
+
+    /** The number of fields. */
+    private int fieldCount = 0;
+
+    /** The class fields. */
+    private final Vector<BtcField> fields;
+
+    /** The number of methods. */
+    private int methodCount = 0;
+
     /** The class methods. */
     private final Vector<BtcMethod> methods;
 
-    private final Vector<BtcField> fields;
+    /** The number of attributes. */
+    private int attributeCount = 0;
 
-    /** The JVM class magic string. */
-    public final String magicString = "CAFEBABE";
-
-    /** The JVM class minor version. */
-    public final String minorVersion = "0000";
-
-    /** The JVM class major version. */
-    public final String majorVersion = "0003C"; // 60
-
-    // TODO: Add more fields
+    /** The class attributes. */
+    private final Vector<String> attributes = new Vector<>();
 
     /**
      * Constructs a new bytecode class.
@@ -81,14 +111,37 @@ public class BtcClass {
      * @return The class as a hex representation.
      */
     public Vector<Integer> getHexRepresentation() {
-        Vector<Integer> hex = new Vector<>();
+        /*Vector<Integer> hex = new Vector<>();
         hex.addAll(hexStringToVector(magicString));
         hex.addAll(hexStringToVector(minorVersion));
         hex.addAll(hexStringToVector(majorVersion));
         for (BtcMethod method : methods) {
             hex.addAll(method.getHexRepresentation());
         }
-        return hex;
+        return hex;*/
+
+        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+        byteBuffer.putInt(this.magicNumber);
+        byteBuffer.putShort((short) this.minorVersion);
+        byteBuffer.putShort((short) this.majorVersion);
+        //byteBuffer.put(this.constPool.toBytecode());
+        byteBuffer.putShort((short) this.accessModifiers);
+        byteBuffer.putShort((short) this.constPoolClassIndex);
+        byteBuffer.putShort((short) this.constPoolSuperclassIndex);
+        //byteBuffer.put(this.interfacePool.toBytecode());
+        byteBuffer.putShort((short) this.fieldCount);
+        for (BtcField field : this.fields) {
+            //byteBuffer.put(field.toBytecode());
+        }
+        byteBuffer.putShort((short) this.methodCount);
+        for (BtcMethod method : this.methods) {
+            //byteBuffer.put(method.toBytecode());
+        }
+        //byteBuffer.putShort((short) this.attributeCount);
+        //byteBuffer.put(this.attributePool.toBytecode());
+        //return byteBuffer.array();
+
+        return null;
     }
 
     /**

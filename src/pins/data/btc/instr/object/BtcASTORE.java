@@ -27,13 +27,13 @@ public class BtcASTORE extends BtcInstr {
     public BtcASTORE(Type type) {
         this.type = type;
         this.opcode = switch (type) {
-            case INT -> 0x4f;
-            case LONG -> 0x50;
-            case FLOAT -> 0x51;
-            case DOUBLE -> 0x52;
-            case BYTE -> 0x54;
-            case CHAR -> 0x55;
-            case SHORT -> 0x56;
+            case INT -> BtcInstr.opcodes.get("IASTORE");
+            case LONG -> BtcInstr.opcodes.get("LASTORE");
+            case FLOAT -> BtcInstr.opcodes.get("FASTORE");
+            case DOUBLE -> BtcInstr.opcodes.get("DASTORE");
+            case BYTE -> BtcInstr.opcodes.get("BASTORE");
+            case CHAR -> BtcInstr.opcodes.get("CASTORE");
+            case SHORT -> BtcInstr.opcodes.get("SASTORE");
         };
     }
 

@@ -26,7 +26,7 @@ public class BtcPOP extends BtcInstr {
      */
     public BtcPOP(Kind kind) {
         this.kind = kind;
-        this.opcode = kind == Kind.POP ? 0x57 : 0x58;
+        this.opcode = kind == Kind.POP ? BtcInstr.opcodes.get("POP") : BtcInstr.opcodes.get("POP2");
     }
 
     @Override

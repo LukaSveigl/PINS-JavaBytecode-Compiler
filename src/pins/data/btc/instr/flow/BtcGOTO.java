@@ -22,9 +22,9 @@ public class BtcGOTO extends BtcInstr {
     public BtcGOTO(int target) {
         this.target = target;
         if (target < 0xffff) {
-            this.opcode = 0xa7;
+            this.opcode = BtcInstr.opcodes.get("GOTO");
         } else { // GOTO_W
-            this.opcode = 0xc8;
+            this.opcode = BtcInstr.opcodes.get("GOTO_W");
         }
         //this.opcode = 0xa7;
     }
@@ -44,11 +44,11 @@ public class BtcGOTO extends BtcInstr {
 
     @Override
     public void log(String pfx) {
-        System.out.println(pfx + "GOTO " + target);
+        System.out.println(pfx + this);
     }
 
     @Override
     public String toString() {
-        return "GOTO " + target;
+        return BtcInstr.getInstructionFromOpcode(this.opcode) + " " + target;
     }
 }

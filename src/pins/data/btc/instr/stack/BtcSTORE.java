@@ -32,11 +32,11 @@ public class BtcSTORE extends BtcInstr {
         this.kind = kind;
         this.index = index;
         this.opcode = switch (kind) {
-            case ISTORE -> 0x36;
-            case LSTORE -> 0x37;
-            case FSTORE -> 0x38;
-            case DSTORE -> 0x39;
-            case ASTORE -> 0x3a;
+            case ISTORE -> BtcInstr.opcodes.get("ISTORE");
+            case LSTORE -> BtcInstr.opcodes.get("LSTORE");
+            case FSTORE -> BtcInstr.opcodes.get("FSTORE");
+            case DSTORE -> BtcInstr.opcodes.get("DSTORE");
+            case ASTORE -> BtcInstr.opcodes.get("ASTORE");
         };
     }
 
