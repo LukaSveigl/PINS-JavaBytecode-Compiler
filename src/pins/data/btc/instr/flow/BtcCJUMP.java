@@ -2,6 +2,7 @@ package pins.data.btc.instr.flow;
 
 import pins.data.btc.instr.BtcInstr;
 
+import java.nio.ByteBuffer;
 import java.util.Vector;
 
 /**
@@ -32,33 +33,36 @@ public class BtcCJUMP extends BtcInstr {
         this.oper = oper;
         this.target = target;
         this.opcode = switch (oper) {
-            case EQ -> 0x9f;
-            case NE -> 0xa0;
-            case LT -> 0xa1;
-            case GE -> 0xa2;
-            case GT -> 0xa3;
-            case LE -> 0xa4;
+            case EQ -> BtcInstr.opcodes.get("IFEQ");
+            case NE -> BtcInstr.opcodes.get("IFNE");
+            case LT -> BtcInstr.opcodes.get("IFLT");
+            case GE -> BtcInstr.opcodes.get("IFGE");
+            case GT -> BtcInstr.opcodes.get("IFGT");
+            case LE -> BtcInstr.opcodes.get("IFLE");
         };
     }
 
     @Override
-    public Vector<Integer> getHexRepresentation() {
-        Vector<Integer> hex = new Vector<>();
-        hex.add(opcode);
-        //hex.add(target);
-        hex.add(target >> 8);
-        hex.add(target & 0xff);
-        return hex;
+    public byte[] toBytecode() {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(3);
+        byteBuffer.put((byte) this.opcode);
+        byteBuffer.putShort((short) target);
+        return byteBuffer.array();
+    }
+
+    @Override
+    public int getBytecodeLength() {
+        return 3;
     }
 
     @Override
     public void log(String pfx) {
-        System.out.println(pfx + "IF_ICMP" + oper.toString() + " " + target);
+        System.out.println(pfx + this);
     }
 
     @Override
     public String toString() {
-        return "IF_ICMP" + oper.toString() + " " + target;
+        return "IF" + oper.toString() + "[" + opcode + ", " + target + "]";
     }
 
 }

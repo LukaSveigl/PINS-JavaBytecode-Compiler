@@ -2,6 +2,7 @@ package pins.data.btc.instr.flow;
 
 import pins.data.btc.instr.BtcInstr;
 
+import java.nio.ByteBuffer;
 import java.util.Vector;
 
 /**
@@ -23,23 +24,31 @@ public class BtcGOTO extends BtcInstr {
         this.target = target;
         if (target < 0xffff) {
             this.opcode = BtcInstr.opcodes.get("GOTO");
-        } else { // GOTO_W
+        } else {
             this.opcode = BtcInstr.opcodes.get("GOTO_W");
         }
         //this.opcode = 0xa7;
     }
 
     @Override
-    public Vector<Integer> getHexRepresentation() {
-        Vector<Integer> hex = new Vector<>();
-        hex.add(opcode);
-        if (opcode == 0xc8) {
-            hex.add(target >> 24);
-            hex.add(target >> 16 & 0xff);
+    public byte[] toBytecode() {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(this.getBytecodeLength());
+        byteBuffer.put((byte) this.opcode);
+        if (this.opcode == BtcInstr.opcodes.get("GOTO")) {
+            byteBuffer.putShort((short) target);
+        } else {
+            byteBuffer.putInt(target);
         }
-        hex.add(target >> 8 & 0xff);
-        hex.add(target & 0xff);
-        return hex;
+        return byteBuffer.array();
+    }
+
+    @Override
+    public int getBytecodeLength() {
+        if (this.opcode == BtcInstr.opcodes.get("GOTO")) {
+            return 3;
+        } else {
+            return 5;
+        }
     }
 
     @Override
@@ -49,6 +58,6 @@ public class BtcGOTO extends BtcInstr {
 
     @Override
     public String toString() {
-        return BtcInstr.getInstructionFromOpcode(this.opcode) + " " + target;
+        return BtcInstr.getInstructionFromOpcode(this.opcode) + "[" + opcode + ", " + target + "]";
     }
 }

@@ -1,14 +1,16 @@
 package pins.data.btc;
 
+import pins.common.logger.Loggable;
 import pins.data.btc.instr.BtcInstr;
 import pins.data.btc.vars.BtcLocal;
 
+import java.nio.ByteBuffer;
 import java.util.Vector;
 
 /**
  * A bytecode method.
  */
-public class BtcMethod {
+public class BtcMethod implements Loggable, BtcComp {
 
     public enum Type {
         CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, REF, VOID
@@ -92,22 +94,25 @@ public class BtcMethod {
         return pars;
     }
 
-    /**
-     * Returns the method instructions as a hex representation.
-     *
-     * @return The method instructions as a hex representation.
-     */
-    public Vector<Integer> getHexRepresentation() {
-        Vector<Integer> hex = new Vector<>();
+    @Override
+    public byte[] toBytecode() {
+        int size = 0;
         for (BtcInstr instr : instrs) {
-            hex.addAll(instr.getHexRepresentation());
+            size += instr.toBytecode().length;
         }
-        return hex;
+        ByteBuffer byteBuffer = ByteBuffer.allocate(size);
+        for (BtcInstr instr : instrs) {
+            byteBuffer.put(instr.toBytecode());
+        }
+        return byteBuffer.array();
     }
 
-    /**
-     * Logs the method.
-     */
+    @Override
+    public int getBytecodeLength() {
+        return 0;
+    }
+
+    @Override
     public void log(String pfx) {
         System.out.println(pfx + type + " " + name);
         for (BtcLocal par : pars) {

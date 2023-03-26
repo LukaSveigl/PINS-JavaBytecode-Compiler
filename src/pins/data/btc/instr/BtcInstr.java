@@ -21,7 +21,7 @@ public abstract class BtcInstr implements Loggable, BtcComp {
     /**
      * The JVM instruction set opcodes.
      */
-    protected static HashMap<String, Integer> opcodes = (HashMap<String, Integer>) Map.<String, Integer>ofEntries(
+    protected static Map<String, Integer> opcodes = Map.<String, Integer>ofEntries(
             Map.entry("NOP", 0x00),
             Map.entry("ACONST_NULL", 0x01),
             Map.entry("ICONST_M1", 0x02),

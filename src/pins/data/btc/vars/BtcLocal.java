@@ -35,12 +35,17 @@ public class BtcLocal extends BtcVar {
         this.index = index;
     }
 
-    public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+    @Override
+    public byte[] toBytecode() {
+        return new byte[0];
     }
 
+    @Override
+    public int getBytecodeLength() {
+        return 0;
+    }
+
+    @Override
     public void log(String pfx) {
         System.out.println(pfx + "BtcLocal: " + type + " " + index + " " + init);
     }

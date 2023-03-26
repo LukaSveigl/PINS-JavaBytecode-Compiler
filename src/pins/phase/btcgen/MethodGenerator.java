@@ -137,7 +137,7 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
 
         if (Memory.varAccesses.get(varDecl) instanceof MemAbsAccess) {
             BtcGen.btcFields.put((MemAbsAccess) Memory.varAccesses.get(varDecl),
-                                 new BtcField(varDecl.name, type, fieldCounter));
+                                 new _BtcField(varDecl.name, type, fieldCounter));
             // TODO: The counters should be refactored into the method.
             fieldCounter++;
         } else {
@@ -324,7 +324,8 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
     public BtcInstr visit(AstConstExpr constExpr, BtcMethod btcMethod) {
         BtcInstr btcInstr = null;
         if (SemAn.exprOfType.get(constExpr) instanceof SemInt) {
-            btcInstr = new BtcCONST(((ImcCONST) ImcGen.exprImc.get(constExpr)).value, BtcCONST.Type.LONG);
+            //btcInstr = new BtcCONST(((ImcCONST) ImcGen.exprImc.get(constExpr)).value, BtcCONST.Type.LONG);
+            btcInstr = new BtcCONST(1, BtcCONST.Type.LONG);
         } else if (SemAn.exprOfType.get(constExpr) instanceof SemChar) {
             btcInstr = new BtcPUSH(((ImcCONST) ImcGen.exprImc.get(constExpr)).value, BtcPUSH.Type.BYTE);
         }

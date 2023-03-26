@@ -2,6 +2,7 @@ package pins.data.btc.instr.object;
 
 import pins.data.btc.instr.BtcInstr;
 
+import java.nio.ByteBuffer;
 import java.util.Vector;
 
 /**
@@ -37,12 +38,16 @@ public class BtcNEWARRAY extends BtcInstr {
     }
 
     @Override
-    public Vector<Integer> getHexRepresentation() {
-        Vector<Integer> hex = new Vector<>();
-        hex.add(opcode);
-        // The type codes start at 4.
-        hex.add(type.ordinal() + 4);
-        return hex;
+    public byte[] toBytecode() {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(3);
+        byteBuffer.put((byte) opcode);
+        byteBuffer.put((byte) (type.ordinal() + 4));
+        return byteBuffer.array();
+    }
+
+    @Override
+    public int getBytecodeLength() {
+        return 2;
     }
 
     @Override
@@ -58,6 +63,7 @@ public class BtcNEWARRAY extends BtcInstr {
         } else {
             return instruction;
         }
+        // TODO: Implement and refactor this.
         //return "NEWARRAY " + type.toString().charAt(2);
     }
 }

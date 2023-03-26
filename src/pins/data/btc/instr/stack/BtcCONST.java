@@ -1,7 +1,9 @@
 package pins.data.btc.instr.stack;
 
+import pins.common.report.Report;
 import pins.data.btc.instr.BtcInstr;
 
+import java.nio.ByteBuffer;
 import java.util.Vector;
 
 /**
@@ -31,15 +33,6 @@ public class BtcCONST extends BtcInstr {
     public BtcCONST(long value, Type type) {
         this.value = value;
         this.type = type;
-        /*this.opcode = switch (type) {
-            case INT -> 0x10;
-            case LONG -> 0x11;
-            case FLOAT -> 0x12;
-            case DOUBLE -> 0x13;
-            case ARR -> 0x14;
-            case VOID -> 0x15;
-        };*/
-
         switch (type) {
             case INT -> {
                 if (value == -1) {
@@ -47,28 +40,28 @@ public class BtcCONST extends BtcInstr {
                 } else if (value > -1 && value <= 5) {
                     this.opcode = BtcInstr.opcodes.get("ICONST_" + value);
                 } else {
-                    this.opcode = BtcInstr.opcodes.get("ICONST");
+                    throw new Report.InternalError();
                 }
             }
             case LONG -> {
                 if (value >= 0 && value <= 1) {
                     this.opcode = BtcInstr.opcodes.get("LCONST_" + value);
                 } else {
-                    this.opcode = BtcInstr.opcodes.get("LCONST");
+                    throw new Report.InternalError();
                 }
             }
             case FLOAT -> {
                 if (value >= 0 && value <= 2) {
                     this.opcode = BtcInstr.opcodes.get("FCONST_" + value);
                 } else {
-                    this.opcode = BtcInstr.opcodes.get("FCONST");
+                    throw new Report.InternalError();
                 }
             }
             case DOUBLE -> {
                 if (value >= 0 && value <= 2) {
                     this.opcode = BtcInstr.opcodes.get("DCONST_" + value);
                 } else {
-                    this.opcode = BtcInstr.opcodes.get("DCONST");
+                    throw new Report.InternalError();
                 }
             }
             case VOID -> {
@@ -78,29 +71,26 @@ public class BtcCONST extends BtcInstr {
     }
 
     @Override
-    public Vector<Integer> getHexRepresentation() {
-        Vector<Integer> hex = new Vector<>();
-        hex.add(opcode);
-        switch (type) {
-            case INT, FLOAT, ARR -> {
-                hex.add((int) value);
-            }
-            case LONG, DOUBLE -> {
-                hex.add((int) value);
-                hex.add((int) (value >> 32));
-            }
-        }
-        return hex;
+    public byte[] toBytecode() {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(1);
+        byteBuffer.put((byte) opcode);
+        return byteBuffer.array();
+    }
+
+    @Override
+    public int getBytecodeLength() {
+        return 1;
     }
 
     @Override
     public void log(String pfx) {
-        System.out.println(pfx + type.toString().charAt(0) + "CONST " + value);
+        System.out.println(pfx + this);
     }
 
     @Override
     public String toString() {
-        return "CONST(" + value + ", " + type + ")";
+        // TODO: Figure out what the fuck is going on here.
+        return BtcInstr.getInstructionFromOpcode(this.opcode) + "[" + opcode + "]";
     }
 
 }

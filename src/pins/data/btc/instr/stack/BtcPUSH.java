@@ -2,6 +2,7 @@ package pins.data.btc.instr.stack;
 
 import pins.data.btc.instr.BtcInstr;
 
+import java.nio.ByteBuffer;
 import java.util.Vector;
 
 /**
@@ -37,27 +38,35 @@ public class BtcPUSH extends BtcInstr {
         };
     }
 
-    public Vector<Integer> getHexRepresentation() {
-        Vector<Integer> hex = new Vector<>();
-        hex.add(opcode);
-        switch (type) {
-            case BYTE -> {
-                hex.add((int) value);
-            }
-            case SHORT -> {
-                hex.add((int) value >> 8);
-                hex.add((int) value & 0xff);
-            }
+    @Override
+    public byte[] toBytecode() {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(this.getBytecodeLength());
+        byteBuffer.put((byte) opcode);
+        if (type == Type.BYTE) {
+            byteBuffer.put((byte) value);
+        } else {
+            byteBuffer.putShort((short) value);
         }
-        return hex;
+        return byteBuffer.array();
     }
 
+    @Override
+    public int getBytecodeLength() {
+        if (type == Type.BYTE) {
+            return 2;
+        } else {
+            return 3;
+        }
+    }
+
+    @Override
     public void log(String pfx) {
-        System.out.println(pfx + type.toString().charAt(0) + "IPUSH " + value);
+        System.out.println(pfx + this);
     }
 
+    @Override
     public String toString() {
-        return type.toString().charAt(0) + "IPUSH " + value;
+        return type.toString().charAt(0) + "IPUSH[" + opcode + ", " + value + "]";
     }
 
 }

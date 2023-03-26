@@ -1,6 +1,14 @@
 package pins.data.btc;
 
-import pins.data.btc.vars.BtcField;
+import pins.common.logger.Loggable;
+import pins.data.btc.apool.BtcAttributeInfo;
+import pins.data.btc.apool.BtcAttributePool;
+import pins.data.btc.cpool.BtcConstPool;
+import pins.data.btc.cpool.entry.BtcCpInfo;
+import pins.data.btc.fpool.BtcField;
+import pins.data.btc.fpool.BtcFieldPool;
+import pins.data.btc.ipool.BtcInterfacePool;
+import pins.data.btc.vars._BtcField;
 
 import java.nio.ByteBuffer;
 import java.util.Vector;
@@ -8,7 +16,7 @@ import java.util.Vector;
 /**
  * A bytecode class.
  */
-public class BtcClass {
+public class BtcClass implements Loggable, BtcComp {
 
     /** The class name. */
     public final String name;
@@ -34,17 +42,17 @@ public class BtcClass {
     /** The superclass constant pool index. */
     private final int constPoolSuperclassIndex = 0;
 
-    /** The number of interfaces. */
-    private int intefaceCount = 0;
-
-    /** The class interfaces. */
-    private final Vector<String> interfaces = new Vector<>();
+    /** The class interface pool. */
+    private BtcInterfacePool interfacePool = new BtcInterfacePool();
 
     /** The number of fields. */
-    private int fieldCount = 0;
+    //private int fieldCount = 0;
 
     /** The class fields. */
-    private final Vector<BtcField> fields;
+    //private final Vector<_BtcField> fields;
+
+    /** The class field pool. */
+    private final BtcFieldPool fieldPool = new BtcFieldPool();
 
     /** The number of methods. */
     private int methodCount = 0;
@@ -52,11 +60,8 @@ public class BtcClass {
     /** The class methods. */
     private final Vector<BtcMethod> methods;
 
-    /** The number of attributes. */
-    private int attributeCount = 0;
-
-    /** The class attributes. */
-    private final Vector<String> attributes = new Vector<>();
+    /** The class attribute pool. */
+    private final BtcAttributePool attributePool = new BtcAttributePool();
 
     /**
      * Constructs a new bytecode class.
@@ -66,7 +71,7 @@ public class BtcClass {
     public BtcClass(String name) {
         this.name = name;
         this.methods = new Vector<>();
-        this.fields = new Vector<>();
+        //this.fields = new Vector<>();
     }
 
     /**
@@ -92,8 +97,12 @@ public class BtcClass {
      *
      * @param field The field to add.
      */
-    public void addField(BtcField field) {
+    /*public void addField(_BtcField field) {
         fields.add(field);
+    }*/
+
+    public void addField(BtcField field) {
+        fieldPool.addEntry(field);
     }
 
     /**
@@ -101,72 +110,135 @@ public class BtcClass {
      *
      * @return The class fields.
      */
-    public Vector<BtcField> fields() {
+    /*public Vector<_BtcField> fields() {
         return fields;
+    }*/
+    public Vector<BtcField> fields() {
+        return fieldPool.entries();
     }
 
     /**
-     * Returns the class as a hex representation.
+     * Adds a constant pool entry to the class.
      *
-     * @return The class as a hex representation.
+     * @param entry The constant pool entry to add.
      */
-    public Vector<Integer> getHexRepresentation() {
-        /*Vector<Integer> hex = new Vector<>();
-        hex.addAll(hexStringToVector(magicString));
-        hex.addAll(hexStringToVector(minorVersion));
-        hex.addAll(hexStringToVector(majorVersion));
-        for (BtcMethod method : methods) {
-            hex.addAll(method.getHexRepresentation());
-        }
-        return hex;*/
+    public int addConstPoolEntry(BtcCpInfo entry) {
+        return constPool.addEntry(entry);
+    }
 
-        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+    /**
+     * Returns the entry in the class constant pool at the specified index.
+     *
+     * @param index The index of the entry.
+     * @return The entry in the class constant pool at the specified index.
+     */
+    public BtcCpInfo getConstPoolEntry(int index) {
+        return constPool.getEntry(index);
+    }
+
+    /**
+     * Returns the entry in the class constant pool with the specified value.
+     *
+     * @param value The value of the entry.
+     * @return The entry in the class constant pool with the specified value.
+     */
+    public BtcCpInfo getConstPoolEntry(String value) {
+        return constPool.getEntry(value);
+    }
+
+    /**
+     * Adds an interface to the class interface pool.
+     *
+     * @param interfaceIndex The interface index in the constant pool.
+     * @return The index of the interface in the interface pool.
+     */
+    public int addInterface(short interfaceIndex) {
+        return interfacePool.addInterface(interfaceIndex);
+    }
+
+    /**
+     * Returns the interface at the specified index in the class interface pool.
+     *
+     * @param index The index of the interface in the interface pool.
+     * @return The interface at the specified index in the class interface pool.
+     */
+    public short getInterface(int index) {
+        return interfacePool.getInterface(index);
+    }
+
+    /**
+     * Adds an attribute to the class attribute pool.
+     *
+     * @param attribute The attribute to add.
+     */
+    public int addAttribute(BtcAttributeInfo attribute) {
+        return attributePool.addEntry(attribute);
+    }
+
+    /**
+     * Returns the attribute at the specified index in the class attribute pool.
+     *
+     * @param index The index of the attribute in the attribute pool.
+     * @return The attribute at the specified index in the class attribute pool.
+     */
+    public BtcAttributeInfo getAttribute(int index) {
+        return attributePool.getEntry(index);
+    }
+
+    @Override
+    public byte[] toBytecode() {
+        int size = 4 + 2 + 2 + 2 + 2 + 2 + 2 + 2 + 2;
+
+        size += constPool.getBytecodeLength();
+
+        for (BtcMethod method : methods) {
+            size += method.getBytecodeLength();
+        }
+
+        /*for (_BtcField field : fields) {
+            size += field.getBytecodeLength();
+        }*/
+        size += fieldPool.getBytecodeLength();
+
+        ByteBuffer byteBuffer = ByteBuffer.allocate(size);
         byteBuffer.putInt(this.magicNumber);
         byteBuffer.putShort((short) this.minorVersion);
         byteBuffer.putShort((short) this.majorVersion);
-        //byteBuffer.put(this.constPool.toBytecode());
+
+        byteBuffer.put(this.constPool.toBytecode());
+
         byteBuffer.putShort((short) this.accessModifiers);
         byteBuffer.putShort((short) this.constPoolClassIndex);
         byteBuffer.putShort((short) this.constPoolSuperclassIndex);
-        //byteBuffer.put(this.interfacePool.toBytecode());
-        byteBuffer.putShort((short) this.fieldCount);
-        for (BtcField field : this.fields) {
-            //byteBuffer.put(field.toBytecode());
-        }
+
+        byteBuffer.put(this.interfacePool.toBytecode());
+
+        /*byteBuffer.putShort((short) this.fieldCount);
+        for (_BtcField field : this.fields) {
+            byteBuffer.put(field.toBytecode());
+        }*/
+        byteBuffer.put(this.fieldPool.toBytecode());
+
         byteBuffer.putShort((short) this.methodCount);
         for (BtcMethod method : this.methods) {
-            //byteBuffer.put(method.toBytecode());
+            byteBuffer.put(method.toBytecode());
         }
-        //byteBuffer.putShort((short) this.attributeCount);
-        //byteBuffer.put(this.attributePool.toBytecode());
-        //return byteBuffer.array();
 
-        return null;
+        byteBuffer.put(this.attributePool.toBytecode());
+        return byteBuffer.array();
     }
 
-    /**
-     * Logs the class.
-     */
+    @Override
+    public int getBytecodeLength() {
+        return 0;
+    }
+
+    @Override
     public void log(String pfx) {
         System.out.println(pfx + "Class " + name);
         for (BtcMethod method : methods) {
             method.log(pfx + "  ");
         }
-    }
-
-    /**
-     * Converts a hex string to a vector of integers.
-     *
-     * @param hexString The hex string to convert.
-     * @return The vector of integers.
-     */
-    private Vector<Integer> hexStringToVector(String hexString) {
-        Vector<Integer> hex = new Vector<>();
-        for (int i = 0; i < hexString.length(); i += 2) {
-            String hexByte = hexString.substring(i, i + 2);
-            hex.add(Integer.parseInt(hexByte, 16));
-        }
-        return hex;
     }
 
 }

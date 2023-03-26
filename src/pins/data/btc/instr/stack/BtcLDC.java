@@ -2,6 +2,7 @@ package pins.data.btc.instr.stack;
 
 import pins.data.btc.instr.BtcInstr;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Vector;
 
@@ -57,16 +58,24 @@ public class BtcLDC extends BtcInstr {
     }
 
     @Override
-    public Vector<Integer> getHexRepresentation() {
-        Vector<Integer> hex = new Vector<>();
-        hex.add(opcode);
-        if (opcode == 0x13) {
-            hex.add(index >> 8);
+    public byte[] toBytecode() {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(this.getBytecodeLength());
+        byteBuffer.put((byte) opcode);
+        if (this.opcode == BtcInstr.opcodes.get("LDC")) {
+            byteBuffer.put((byte) index);
+        } else {
+            byteBuffer.putShort((short) index);
         }
-        hex.add(index & 0xff);
+        return byteBuffer.array();
+    }
 
-        // hex.add(index);
-        return hex;
+    @Override
+    public int getBytecodeLength() {
+        if (this.opcode == BtcInstr.opcodes.get("LDC")) {
+            return 2;
+        } else {
+            return 3;
+        }
     }
 
     @Override
@@ -76,7 +85,7 @@ public class BtcLDC extends BtcInstr {
 
     @Override
     public String toString() {
-        return BtcInstr.getInstructionFromOpcode(this.opcode) + " " +  index;
+        return BtcInstr.getInstructionFromOpcode(this.opcode) + "[" + opcode + ", " +  index + "]";
     }
 
 }

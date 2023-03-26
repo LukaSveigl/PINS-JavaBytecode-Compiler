@@ -5,7 +5,9 @@ import pins.data.btc.BtcComp;
 
 public abstract class BtcVar implements Loggable, BtcComp {
 
-    /** The type. */
+    /**
+     * The type.
+     * */
     public enum Type {
         BYTE, SHORT, CHAR, INT, LONG, FLOAT, DOUBLE, REF
     }

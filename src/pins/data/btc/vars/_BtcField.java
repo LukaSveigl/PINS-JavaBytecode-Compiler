@@ -1,14 +1,9 @@
 package pins.data.btc.vars;
 
-import pins.common.logger.Loggable;
-import pins.data.btc.BtcComp;
-
-import java.util.Vector;
-
 /**
  * A field of a bytecode class.
  */
-public class BtcField extends BtcVar {
+public class _BtcField extends BtcVar {
 
     /** The field name. */
     public final String name;
@@ -21,18 +16,23 @@ public class BtcField extends BtcVar {
 
     public int init = 0;
 
-    public BtcField(String name, Type type, int index) {
+    public _BtcField(String name, Type type, int index) {
         this.name = name;
         this.type = type;
         this.index = index;
     }
 
-    public Vector<Integer> getHexRepresentation() {
-        // TODO: Implement
-
-        return null;
+    @Override
+    public byte[] toBytecode() {
+        return new byte[0];
     }
 
+    @Override
+    public int getBytecodeLength() {
+        return 0;
+    }
+
+    @Override
     public void log(String pfx) {
         System.out.println(pfx + "BtcField: " + name + " " + type + " " + index + " " + init);
     }

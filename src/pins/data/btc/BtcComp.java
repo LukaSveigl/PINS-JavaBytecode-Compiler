@@ -8,10 +8,17 @@ import java.util.Vector;
 public interface BtcComp {
 
     /**
-     * Returns the hexadecimal representation of the component.
+     * Returns the bytecode component as a byte array.
      *
-     * @return The hexadecimal representation of the component.
+     * @return The bytecode component as a byte array.
      */
-     Vector<Integer> getHexRepresentation();
+     byte[] toBytecode();
+
+    /**
+     * Returns the size of the bytecode component.
+     *
+     * @return The size of the bytecode component.
+     */
+    int getBytecodeLength();
 
 }

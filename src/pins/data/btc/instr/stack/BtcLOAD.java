@@ -2,6 +2,7 @@ package pins.data.btc.instr.stack;
 
 import pins.data.btc.instr.BtcInstr;
 
+import java.nio.ByteBuffer;
 import java.util.Vector;
 
 /**
@@ -41,21 +42,26 @@ public class BtcLOAD extends BtcInstr {
     }
 
     @Override
-    public Vector<Integer> getHexRepresentation() {
-        Vector<Integer> hex = new Vector<>();
-        hex.add(opcode);
-        hex.add(index);
-        return hex;
+    public byte[] toBytecode() {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(2);
+        byteBuffer.put((byte) opcode);
+        byteBuffer.put((byte) index);
+        return byteBuffer.array();
+    }
+
+    @Override
+    public int getBytecodeLength() {
+        return 2;
     }
 
     @Override
     public void log(String pfx) {
-        System.out.println(pfx + type + " " + index);
+        System.out.println(pfx + this);
     }
 
     @Override
     public String toString() {
-        return type + " " + index;
+        return type + "[" + opcode + ", " + index + "]";
     }
 
 }
