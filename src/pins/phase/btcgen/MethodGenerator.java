@@ -275,7 +275,8 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
      * @return The bytecode instructions.
      */
     public BtcInstr visit(AstAssignStmt assignStmt, BtcMethod btcMethod) {
-        BtcInstr btcInstr = null;
+        return null;
+        /*BtcInstr btcInstr = null;
         if (assignStmt.fstSubExpr instanceof AstBinExpr) {
             assignStmt.fstSubExpr.accept(this, btcMethod);
         } else if (assignStmt.fstSubExpr instanceof AstNameExpr) {
@@ -308,7 +309,7 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMethod> {
         assignStmt.sndSubExpr.accept(this, btcMethod);
         btcMethod.addInstr(btcInstr);
         lineCounter++;
-        return btcInstr;
+        return btcInstr;*/
     }
 
 

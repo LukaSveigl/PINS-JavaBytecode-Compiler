@@ -1,6 +1,7 @@
 package pins.phase.btcgen;
 
 import pins.common.report.Report;
+import pins.data.btc.BtcClass;
 
 import java.io.*;
 
@@ -19,6 +20,7 @@ public class BtcEmitter {
      */
     public BtcEmitter(String dstFileName) {
         this.dstFileName = dstFileName;
+        System.out.println("Writing to " + dstFileName);
         try {
             File dstFile = new File(dstFileName);
             dstFile.createNewFile();
@@ -32,7 +34,13 @@ public class BtcEmitter {
      * Emits the bytecode.
      */
     public void emit() {
-
+        for (BtcClass btcClass : BtcGen.btcClasses) {
+            try {
+                this.dstFile.write(btcClass.toBytecode());
+            } catch (IOException e) {
+                throw new Report.Error("Cannot write to file " + this.dstFileName);
+            }
+        }
     }
 
 }

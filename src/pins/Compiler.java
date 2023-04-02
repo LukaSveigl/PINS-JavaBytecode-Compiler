@@ -170,7 +170,9 @@ public class Compiler {
 						//MethodGenerator methodGenerator = new MethodGenerator();
 						//methodGenerator.generate();
 
-						ast.accept(new MethodGenerator(), null);
+						//ast.accept(new MethodGenerator(), null);
+						System.out.println(cmdLine.get("--dst-file-name"));
+						ast.accept(new ClassGenerator(cmdLine.get("--dst-file-name")), null);
 
 						for (BtcMethod btcMethod : BtcGen.btcMethods.values()) {
 							btcMethod.log("");
@@ -185,8 +187,8 @@ public class Compiler {
 							btcField.log("");
 						}
 
-						ClassGenerator classGenerator = new ClassGenerator(cmdLine.get("--dst-file-name"));
-						classGenerator.generate();
+						/*ClassGenerator classGenerator = new ClassGenerator(cmdLine.get("--dst-file-name"));
+						classGenerator.generate();*/
 
 						BtcEmitter btcemit = new BtcEmitter(cmdLine.get("--dst-file-name"));
 						btcemit.emit();

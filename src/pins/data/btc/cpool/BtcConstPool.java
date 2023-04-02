@@ -29,7 +29,7 @@ public class BtcConstPool implements Loggable, BtcComp {
      */
     public int addEntry(BtcCpInfo entry) {
         entries.add(entry);
-        return entries.size() - 1;
+        return entries.size();
     }
 
     /**

@@ -25,7 +25,9 @@ public class ClassGenerator implements AstVisitor<BtcClass, Void> {
      * Constructs a new bytecode class generator.
      */
     public ClassGenerator(String dstFileName) {
-        this.dstClassName = dstFileName.substring(0, dstFileName.indexOf('.'));
+        //this.dstClassName = dstFileName.substring(0, dstFileName.indexOf('.'));
+        this.dstClassName = dstFileName.substring(dstFileName.lastIndexOf("/") + 1, dstFileName.lastIndexOf("."));
+        System.out.println("Generating bytecode for class " + this.dstClassName);
         this.currClass = BtcGen.btcClasses.push(new BtcClass(dstClassName));
     }
 

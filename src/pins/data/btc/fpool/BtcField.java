@@ -11,34 +11,6 @@ import java.nio.ByteBuffer;
  */
 public class BtcField implements Loggable, BtcComp {
 
-    /**
-     * The field descriptor.
-     */
-    public enum Descriptor {
-        BOOLEAN("Z"),
-        BYTE("B"),
-        CHAR("C"),
-        SHORT("S"),
-        INT("I"),
-        LONG("J"),
-        FLOAT("F"),
-        DOUBLE("D"),
-        REFERENCE("L"),
-        ARRAY("[");
-
-        /** The descriptor. */
-        public final String descriptor;
-
-        /**
-         * Constructs a new descriptor.
-         *
-         * @param descriptor The descriptor.
-         */
-        Descriptor(String descriptor) {
-            this.descriptor = descriptor;
-        }
-    }
-
     /** The field access modifiers. */
     public final int accessFlags = 0x0001; // Public
 
@@ -48,7 +20,7 @@ public class BtcField implements Loggable, BtcComp {
     /** The field descriptor index in the class constant pool. */
     public final int descriptorIndex;
 
-    /** The number field attributes. */
+    /** The number of field attributes. */
     public final int attributesCount;
 
     /** The field attributes. */
@@ -64,8 +36,14 @@ public class BtcField implements Loggable, BtcComp {
     public BtcField(int nameIndex, int descriptorIndex, BtcAttributeInfo[] attributes) {
         this.nameIndex = nameIndex;
         this.descriptorIndex = descriptorIndex;
-        this.attributes = attributes.clone();
-        this.attributesCount = attributes.length;
+        if (attributes != null) {
+            this.attributes = attributes;
+            this.attributesCount = attributes.length;
+        } else {
+            this.attributesCount = 0;
+        }
+        /*this.attributes = attributes.clone();
+        this.attributesCount = attributes.length;*/
     }
 
     @Override

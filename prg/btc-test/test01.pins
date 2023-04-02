@@ -6,6 +6,7 @@ fun test(x: int): int = ({
 });
 
 var z: char;
+var Z: int;
 
 fun main(): char = ({
     x = 3;

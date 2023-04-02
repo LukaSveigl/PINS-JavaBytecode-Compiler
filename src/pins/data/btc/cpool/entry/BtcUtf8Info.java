@@ -23,7 +23,7 @@ public class BtcUtf8Info extends BtcCpInfo {
         super(Tag.UTF8);
 
         this.bytes = bytes;
-        this.length = bytes.getBytes(StandardCharsets.UTF_16BE).length;
+        this.length = bytes.getBytes(StandardCharsets.UTF_8).length;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class BtcUtf8Info extends BtcCpInfo {
         ByteBuffer byteBuffer = ByteBuffer.allocate(getBytecodeLength());
         byteBuffer.put((byte) tag.value);
         byteBuffer.putShort((short) length);
-        byteBuffer.put(bytes.getBytes(StandardCharsets.UTF_16BE));
+        byteBuffer.put(bytes.getBytes(StandardCharsets.UTF_8));
         return byteBuffer.array();
     }
 

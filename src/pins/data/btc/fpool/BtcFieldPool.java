@@ -4,6 +4,7 @@ import pins.common.logger.Loggable;
 import pins.data.btc.BtcComp;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -11,10 +12,39 @@ import java.util.Vector;
  */
 public class BtcFieldPool implements Loggable, BtcComp {
 
+    /**
+     * The field descriptors.
+     */
+    public enum Descriptor {
+        BOOLEAN("Z"),
+        BYTE("B"),
+        CHAR("C"),
+        SHORT("S"),
+        INT("I"),
+        LONG("J"),
+        FLOAT("F"),
+        DOUBLE("D"),
+        REFERENCE("L"),
+        ARRAY("[");
+
+        /** The descriptor. */
+        public final String descriptor;
+
+        /**
+         * Constructs a new descriptor.
+         *
+         * @param descriptor The descriptor.
+         */
+        Descriptor(String descriptor) {
+            this.descriptor = descriptor;
+        }
+    }
+
+    /** Maps the descriptor to its index in the constant pool. */
+    private final HashMap<Descriptor, Integer> descriptorIndices = new HashMap<>();
+
     /** The fields. */
     private final Vector<BtcField> entries = new Vector<>();
-
-    private int currentIndex = 0;
 
     /**
      * Constructs a new field pool.
