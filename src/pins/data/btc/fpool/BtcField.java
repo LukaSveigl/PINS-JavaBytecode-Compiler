@@ -59,12 +59,13 @@ public class BtcField implements Loggable, BtcComp {
      *
      * @param nameIndex       The field name index in the class constant pool.
      * @param descriptorIndex The field descriptor index in the class constant pool.
-     * @param attributesCount The number field attributes.
+     * @param attributes      The field attributes.
      */
-    public BtcField(int nameIndex, int descriptorIndex, int attributesCount) {
+    public BtcField(int nameIndex, int descriptorIndex, BtcAttributeInfo[] attributes) {
         this.nameIndex = nameIndex;
         this.descriptorIndex = descriptorIndex;
-        this.attributesCount = attributesCount;
+        this.attributes = attributes.clone();
+        this.attributesCount = attributes.length;
     }
 
     @Override

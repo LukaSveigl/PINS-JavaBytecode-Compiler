@@ -28,8 +28,9 @@ public class BtcFieldPool implements Loggable, BtcComp {
      *
      * @param entry The field to add.
      */
-    public void addEntry(BtcField entry) {
+    public int addField(BtcField entry) {
         entries.add(entry);
+        return entries.size() - 1;
     }
 
     /**
@@ -38,8 +39,18 @@ public class BtcFieldPool implements Loggable, BtcComp {
      * @param index The index of the field.
      * @return The field in the field pool at the specified index.
      */
-    public BtcField getEntry(int index) {
+    public BtcField getField(int index) {
         return entries.get(index);
+    }
+
+    /**
+     * Returns the field in the field pool with the specified name index. Same as searching by name.
+     *
+     * @param nameIndex The name index of the field.
+     * @return The field in the field pool with the specified name index.
+     */
+    public BtcField getFieldByNameIndex(int nameIndex) {
+        return entries.stream().filter(f -> f.nameIndex == nameIndex).findFirst().orElse(null);
     }
 
     /**

@@ -27,8 +27,8 @@ public class BtcAttributePool implements Loggable, BtcComp {
      * @param entry The attribute to add.
      * @return The index of the attribute in the attribute pool.
      */
-    public int addEntry(BtcAttributeInfo entry) {
-        entries.add(entry);
+    public int addAttribute(BtcAttributeInfo attribute) {
+        entries.add(attribute);
         return entries.size() - 1;
     }
 
@@ -38,7 +38,7 @@ public class BtcAttributePool implements Loggable, BtcComp {
      * @param index The index of the attribute.
      * @return The attribute at the specified index.
      */
-    public BtcAttributeInfo getEntry(int index) {
+    public BtcAttributeInfo getAttribute(int index) {
         return entries.get(index);
     }
 
@@ -47,7 +47,7 @@ public class BtcAttributePool implements Loggable, BtcComp {
      *
      * @return The attribute pool entries.
      */
-    public Vector<BtcAttributeInfo> entries() {
+    public Vector<BtcAttributeInfo> attributes() {
         return entries;
     }
 

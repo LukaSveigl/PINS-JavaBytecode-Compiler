@@ -101,9 +101,6 @@ public class BtcClass implements Loggable, BtcComp {
         fields.add(field);
     }*/
 
-    public void addField(BtcField field) {
-        fieldPool.addEntry(field);
-    }
 
     /**
      * Returns the class fields.
@@ -113,9 +110,6 @@ public class BtcClass implements Loggable, BtcComp {
     /*public Vector<_BtcField> fields() {
         return fields;
     }*/
-    public Vector<BtcField> fields() {
-        return fieldPool.entries();
-    }
 
     /**
      * Adds a constant pool entry to the class.
@@ -167,12 +161,51 @@ public class BtcClass implements Loggable, BtcComp {
     }
 
     /**
+     * Adds a field to the class field pool.
+     *
+     * @param field The field to add.
+     * @return The index of the field in the field pool.
+     */
+    public int addField(BtcField field) {
+        return fieldPool.addField(field);
+    }
+
+    /**
+     * Returns the field at the specified index in the class field pool.
+     *
+     * @param index The index of the field in the field pool.
+     * @return The field at the specified index in the class field pool.
+     */
+    public BtcField getField(int index) {
+        return fieldPool.getField(index);
+    }
+
+    /**
+     * Returns the field with the specified name in the class field pool.
+     *
+     * @param name The name of the field in the field pool.
+     * @return The field with the specified name in the class field pool.
+     */
+    public BtcField getField(String name) {
+        int index = 0;
+        for (int i = 0; i < constPool.entries().size(); i++) {
+            if (constPool.entries().get(i).value().equals(name)) {
+                index = i;
+                break;
+            }
+        }
+
+        return fieldPool.getFieldByNameIndex(index);
+    }
+
+    /**
      * Adds an attribute to the class attribute pool.
      *
      * @param attribute The attribute to add.
+     * @return The index of the attribute in the attribute pool.
      */
     public int addAttribute(BtcAttributeInfo attribute) {
-        return attributePool.addEntry(attribute);
+        return attributePool.addAttribute(attribute);
     }
 
     /**
@@ -182,7 +215,7 @@ public class BtcClass implements Loggable, BtcComp {
      * @return The attribute at the specified index in the class attribute pool.
      */
     public BtcAttributeInfo getAttribute(int index) {
-        return attributePool.getEntry(index);
+        return attributePool.getAttribute(index);
     }
 
     @Override
