@@ -3,32 +3,59 @@ package pins.phase.btcgen;
 import pins.common.report.Report;
 import pins.data.ast.AstVarDecl;
 import pins.data.ast.visitor.AstVisitor;
-import pins.data.btc.BtcClass;
-import pins.data.btc.fpool.BtcField;
-import pins.data.typ.*;
+import pins.data.btc.BtcCLASS;
+import pins.data.btc.var.BtcFIELD;
+import pins.data.typ.SemArr;
+import pins.data.typ.SemChar;
+import pins.data.typ.SemInt;
+import pins.data.typ.SemPtr;
 import pins.phase.seman.SemAn;
 
-public class FieldGenerator implements AstVisitor<BtcField, BtcClass> {
+/**
+ * Bytecode class field generator.
+ */
+public class FieldGenerator implements AstVisitor<BtcFIELD, BtcCLASS> {
 
     @Override
-    public BtcField visit(AstVarDecl varDecl, BtcClass btcClass) {
-        SemType type = SemAn.describesType.get(varDecl.type);
-        String descriptor;
-
-        if (type instanceof SemInt) {
-            descriptor = "J";
-        } else if (type instanceof SemChar) {
-            descriptor = "C";
-        } else if (type instanceof SemArr) {
-            descriptor = "[";
-        } else if (type instanceof SemPtr) {
-            descriptor = "L";
+    public BtcFIELD visit(AstVarDecl varDecl, BtcCLASS btcClass) {
+        BtcFIELD.Type type = null;
+        BtcFIELD.Type subType = null;
+        if (SemAn.describesType.get(varDecl.type) instanceof SemInt) {
+            type = BtcFIELD.Type.LONG;
+        } else if (SemAn.describesType.get(varDecl.type) instanceof SemChar) {
+            type = BtcFIELD.Type.INT;
+        } else if (SemAn.describesType.get(varDecl.type) instanceof SemArr) {
+            type = BtcFIELD.Type.ARRAY;
+            SemArr arrType =  (SemArr) SemAn.describesType.get(varDecl.type);
+            if (arrType.elemType instanceof SemInt) {
+                subType = BtcFIELD.Type.LONG;
+            } else if (arrType.elemType instanceof SemChar) {
+                subType = BtcFIELD.Type.INT;
+            } else if (arrType.elemType instanceof SemPtr) {
+                subType = BtcFIELD.Type.OBJECT;
+            } else {
+                throw new Report.InternalError();
+            }
+        } else if (SemAn.describesType.get(varDecl.type) instanceof SemPtr) {
+            type = BtcFIELD.Type.OBJECT;
+            SemPtr ptrType = (SemPtr) SemAn.describesType.get(varDecl.type);
+            if (ptrType.baseType instanceof SemInt) {
+                subType = BtcFIELD.Type.LONG;
+            } else if (ptrType.baseType instanceof SemChar) {
+                subType = BtcFIELD.Type.INT;
+            } else if (ptrType.baseType instanceof SemPtr) {
+                subType = BtcFIELD.Type.OBJECT;
+            } else {
+                throw new Report.InternalError();
+            }
         } else {
-            throw new Report.Error("Unknown type");
+            throw new Report.InternalError();
         }
+        // NOTE: If a new type is added, add it here.
 
-        btcClass.addField(varDecl.name, descriptor, null);
-        return null;
+        BtcFIELD field = new BtcFIELD(varDecl.name, type, subType);
+        btcClass.addField(varDecl, field);
+        return field;
     }
 
 }

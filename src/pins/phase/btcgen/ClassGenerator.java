@@ -5,7 +5,7 @@ import pins.data.ast.ASTs;
 import pins.data.ast.AstFunDecl;
 import pins.data.ast.AstVarDecl;
 import pins.data.ast.visitor.AstVisitor;
-import pins.data.btc.BtcClass;
+import pins.data.btc.BtcCLASS;
 import pins.data.mem.MemAbsAccess;
 import pins.data.mem.MemAccess;
 import pins.phase.memory.Memory;
@@ -13,22 +13,23 @@ import pins.phase.memory.Memory;
 /**
  * Bytecode class generator.
  */
-public class ClassGenerator implements AstVisitor<BtcClass, Void> {
+public class ClassGenerator implements AstVisitor<BtcCLASS, Void> {
 
     /** The destination class name. */
     private final String dstClassName;
 
     /** The current bytecode class. */
-    private final BtcClass currClass;
+    private final BtcCLASS currClass;
 
     /**
      * Constructs a new bytecode class generator.
+     *
+     * @param dstFileName The destination file name.
      */
     public ClassGenerator(String dstFileName) {
-        //this.dstClassName = dstFileName.substring(0, dstFileName.indexOf('.'));
         this.dstClassName = dstFileName.substring(dstFileName.lastIndexOf("/") + 1, dstFileName.lastIndexOf("."));
-        System.out.println("Generating bytecode for class " + this.dstClassName);
-        this.currClass = BtcGen.btcClasses.push(new BtcClass(dstClassName));
+        this.currClass = BtcGen.btcClasses.push(new BtcCLASS(dstClassName, dstFileName.substring(dstFileName.indexOf(
+                "="), dstFileName.lastIndexOf("."))));
     }
 
     /**
@@ -39,7 +40,7 @@ public class ClassGenerator implements AstVisitor<BtcClass, Void> {
      * @return The result of the visit.
      */
     @Override
-    public BtcClass visit(ASTs<?> asts, Void visArg) {
+    public BtcCLASS visit(ASTs<?> asts, Void visArg) {
         // First: Generate the class fields.
         for (AST ast : asts.asts()) {
             if (ast instanceof AstVarDecl) {
@@ -57,4 +58,5 @@ public class ClassGenerator implements AstVisitor<BtcClass, Void> {
         }
         return this.currClass;
     }
+
 }

@@ -3,14 +3,12 @@ package pins;
 import java.util.*;
 import pins.common.report.*;
 import pins.data.ast.*;
-import pins.data.btc.BtcMethod;
-import pins.data.btc.vars.BtcVar;
-import pins.data.imc.code.stmt.ImcStmt;
-import pins.data.lin.LinCodeChunk;
-import pins.phase.btcgen.BtcEmitter;
+import pins.data.btc.BtcCLASS;
+import pins.phase.btcemt.BtcEmt;
+import pins.phase.btcemt.CodeConverter;
+import pins.phase.btcemt.CodeEmitter;
 import pins.phase.btcgen.BtcGen;
 import pins.phase.btcgen.ClassGenerator;
-import pins.phase.btcgen.MethodGenerator;
 import pins.phase.lexan.*;
 import pins.phase.synan.*;
 import pins.phase.seman.*;
@@ -166,32 +164,22 @@ public class Compiler {
 					break;
 				}
 				if (cmdLine.get("--comp-method").equals("compile")) {
-					try (BtcGen btcgen = new BtcGen()) {
-						//MethodGenerator methodGenerator = new MethodGenerator();
-						//methodGenerator.generate();
-
-						//ast.accept(new MethodGenerator(), null);
+					try (BtcGen btcgen = new BtcGen(); BtcEmt btcemt = new BtcEmt()) {
 						System.out.println(cmdLine.get("--dst-file-name"));
 						ast.accept(new ClassGenerator(cmdLine.get("--dst-file-name")), null);
 
-						for (BtcMethod btcMethod : BtcGen.btcMethods.values()) {
-							btcMethod.log("");
-							System.out.println();
+						for (BtcCLASS btcClass : BtcGen.btcClasses) {
+							btcClass.log("");
 						}
 
-						for (BtcVar btcLocal : BtcGen.btcLocals.values()) {
-							btcLocal.log("");
-						}
+						CodeConverter codeConverter = new CodeConverter();
+						codeConverter.convert();
 
-						for (BtcVar btcField : BtcGen.btcFields.values()) {
-							btcField.log("");
-						}
+						CodeEmitter codeEmitter = new CodeEmitter();
+						codeEmitter.emit();
 
-						/*ClassGenerator classGenerator = new ClassGenerator(cmdLine.get("--dst-file-name"));
-						classGenerator.generate();*/
-
-						BtcEmitter btcemit = new BtcEmitter(cmdLine.get("--dst-file-name"));
-						btcemit.emit();
+						//BtcEmitter btcemit = new BtcEmitter(cmdLine.get("--dst-file-name"));
+						//btcemit.emit();
 					}
 					break;
 				}

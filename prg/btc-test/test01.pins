@@ -42,3 +42,9 @@ fun swap(x: int, y: int): void = ({
 where
     var tmp: int;
 );
+
+fun wtf(): void = ({
+    if 1 == 1 then
+        swap(1, 1);
+    end;
+});
