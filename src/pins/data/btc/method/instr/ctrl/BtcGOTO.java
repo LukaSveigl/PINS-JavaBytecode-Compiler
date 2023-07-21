@@ -19,6 +19,7 @@ public class BtcGOTO extends BtcInstr {
      */
     public BtcGOTO(int index) {
         super(index);
+        this.opcode = BtcInstr.opcodes.get("GOTO");
     }
 
     /**

@@ -1,0 +1,15 @@
+fun main(): void = {
+    x = getInt();
+    putInt(x);
+    y = getChar();
+    putChar(y);
+};
+
+var x: int;
+var y: char;
+
+fun putInt(i: int): void = none;
+fun getInt(): int = 0;
+
+fun putChar(c: char): void = none;
+fun getChar(): char = (0 : char);

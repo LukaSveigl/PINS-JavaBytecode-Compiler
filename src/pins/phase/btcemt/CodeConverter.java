@@ -82,13 +82,28 @@ public class CodeConverter {
             case OBJECT -> typeDescriptor = "L" + field.subType + ";";
         }
 
-        int descriptorIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info(typeDescriptor));
-        currentClassFile.addFieldInfo(new EmtFieldInfo(flags, nameIndex, descriptorIndex, 0, null));
-        EmtNameAndTypeInfo nameAndTypeInfo = new EmtNameAndTypeInfo(nameIndex, descriptorIndex);
-        int nameAndTypeIndex = currentClassFile.addConstPoolInfo(nameAndTypeInfo);
-        EmtFieldrefInfo fieldrefInfo = new EmtFieldrefInfo(currentClassFile.thisClassIndex, nameAndTypeIndex);
-        currentClassFile.addConstPoolInfo(fieldrefInfo);
-        BtcEmt.fieldRefs.put(field, fieldrefInfo);
+        if (field.name.equals("PrintStream")) {
+            int systemUtfIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info("java/lang/System"));
+            int outUtfIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info("out"));
+            int printUtfIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info("Ljava/io/PrintStream;"));
+
+            int nameAndTypeIndex = currentClassFile.addConstPoolInfo(new EmtNameAndTypeInfo(outUtfIndex, printUtfIndex));
+            int classIndex = currentClassFile.addConstPoolInfo(new EmtClassInfo(systemUtfIndex));
+            EmtFieldrefInfo emtFieldrefInfo = new EmtFieldrefInfo(classIndex, nameAndTypeIndex);
+            int index = currentClassFile.addConstPoolInfo(emtFieldrefInfo);
+            BtcEmt.fieldRefs.put(field, emtFieldrefInfo);
+            BtcEmt.fieldRefConstPoolIndices.put(emtFieldrefInfo, index);
+
+        } else {
+            int descriptorIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info(typeDescriptor));
+            currentClassFile.addFieldInfo(new EmtFieldInfo(flags, nameIndex, descriptorIndex, 0, null));
+            EmtNameAndTypeInfo nameAndTypeInfo = new EmtNameAndTypeInfo(nameIndex, descriptorIndex);
+            int nameAndTypeIndex = currentClassFile.addConstPoolInfo(nameAndTypeInfo);
+            EmtFieldrefInfo fieldrefInfo = new EmtFieldrefInfo(currentClassFile.thisClassIndex, nameAndTypeIndex);
+            int index = currentClassFile.addConstPoolInfo(fieldrefInfo);
+            BtcEmt.fieldRefs.put(field, fieldrefInfo);
+            BtcEmt.fieldRefConstPoolIndices.put(fieldrefInfo, index);
+        }
     }
 
     private void convertMethod(BtcMETHOD method) {
@@ -114,30 +129,37 @@ public class CodeConverter {
         int nameIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info(method.name));
 
         String typeDescriptor = "(";
-        for (BtcMETHOD.Type parType : method.parTypes()) {
-            switch (parType) {
-                case INT -> typeDescriptor += "I";
-                case FLOAT -> typeDescriptor += "F";
-                case LONG -> typeDescriptor += "J";
-                case DOUBLE -> typeDescriptor += "D";
-                case BOOL -> typeDescriptor += "Z";
-                case STRING -> typeDescriptor += "Ljava/lang/String;";
-            }
-        }
 
-        typeDescriptor += ")" + switch (method.ret) {
-            case INT -> "I";
-            case FLOAT -> "F";
-            case LONG -> "J";
-            case DOUBLE -> "D";
-            case BOOL -> "Z";
-            case STRING -> "Ljava/lang/String;";
-            // TODO: Fix arrays and pointers.
-            //case ARRAY -> "[" + method.retSubType;
-            //case OBJECT -> "L" + method.retSubType + ";";
-            case VOID -> "V";
-            default -> throw new Report.InternalError();
-        };
+        if (method.name.equals("main")) {
+            typeDescriptor += "[Ljava/lang/String;";
+            typeDescriptor += ")";
+            typeDescriptor += "V";
+        } else {
+            for (BtcMETHOD.Type parType : method.parTypes()) {
+                switch (parType) {
+                    case INT -> typeDescriptor += "I";
+                    case FLOAT -> typeDescriptor += "F";
+                    case LONG -> typeDescriptor += "J";
+                    case DOUBLE -> typeDescriptor += "D";
+                    case BOOL -> typeDescriptor += "Z";
+                    case STRING -> typeDescriptor += "Ljava/lang/String;";
+                }
+            }
+
+            typeDescriptor += ")" + switch (method.ret) {
+                case INT -> "I";
+                case FLOAT -> "F";
+                case LONG -> "J";
+                case DOUBLE -> "D";
+                case BOOL -> "Z";
+                case STRING -> "Ljava/lang/String;";
+                // TODO: Fix arrays and pointers.
+                //case ARRAY -> "[" + method.retSubType;
+                //case OBJECT -> "L" + method.retSubType + ";";
+                case VOID -> "V";
+                default -> throw new Report.InternalError();
+            };
+        }
 
         int descriptorIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info(typeDescriptor));
 
@@ -260,14 +282,125 @@ public class CodeConverter {
         }
         // Object instructions.
         else if (instr instanceof BtcACCESS) {
-
+            code.put((byte) instr.opcode());
+            EmtFieldrefInfo fieldrefInfo = BtcEmt.fieldRefs.get(((BtcACCESS) instr).field);
+            System.out.println("\n\n\nFIELDREF: ");
+            System.out.println(((BtcACCESS) instr).field);
+            System.out.println(fieldrefInfo);
+            System.out.println(BtcEmt.fieldRefConstPoolIndices.get(fieldrefInfo));
+            int index = BtcEmt.fieldRefConstPoolIndices.get(fieldrefInfo);
+            code.putShort((short) index);
         } else if (instr instanceof BtcALOAD) {
-
+            code.put((byte) instr.opcode());
         } else if (instr instanceof BtcASTORE) {
-
+            code.put((byte) instr.opcode());
         } else if (instr instanceof BtcINVOKE) {
+            code.put((byte) instr.opcode());
+
+            switch (((BtcINVOKE) instr).type) {
+                case SPECIAL, STATIC, VIRTUAL -> {
+
+                    if (((BtcINVOKE) instr).name.equals("putInt") || ((BtcINVOKE) instr).name.equals("putChar")) {
+                        int printStreamIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info("java/io/PrintStream"));
+                        int printlnIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info("print"));
+                        int descriptorIndex = 0;
+
+                        if (((BtcINVOKE) instr).name.equals("putInt")) {
+                            descriptorIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info("(J)V"));
+                        } else {
+                            descriptorIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info("(C)V"));
+                        }
+
+                        int nameAndTypeIndex = currentClassFile.addConstPoolInfo(new EmtNameAndTypeInfo(printlnIndex, descriptorIndex));
+                        int classIndex = currentClassFile.addConstPoolInfo(new EmtClassInfo(printStreamIndex));
+                        int methodRefIndex = currentClassFile.addConstPoolInfo(new EmtMethodrefInfo(classIndex, nameAndTypeIndex));
+                        code.putShort((short) methodRefIndex);
+                    } else if (((BtcINVOKE) instr).name.contains(":")) {
+                        //String example = "java/lang/System.console:()Ljava/io/Console;";
+
+                        String classUtf = ((BtcINVOKE) instr).name.split("\\.")[0];
+                        String methodUtf = ((BtcINVOKE) instr).name.split("\\.")[1].split(":")[0];
+                        String descriptorUtf = ((BtcINVOKE) instr).name.split(":")[1];
+
+                        int classUtfIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info(classUtf));
+                        int methodUtfIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info(methodUtf));
+                        int descriptorIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info(descriptorUtf));
+
+                        int nameAndTypeIndex = currentClassFile.addConstPoolInfo(new EmtNameAndTypeInfo(methodUtfIndex, descriptorIndex));
+                        int classIndex = currentClassFile.addConstPoolInfo(new EmtClassInfo(classUtfIndex));
+                        int methodRefIndex = currentClassFile.addConstPoolInfo(new EmtMethodrefInfo(classIndex, nameAndTypeIndex));
+                        code.putShort((short) methodRefIndex);
+                    } else {
+                        int classUtfIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info(currentClassFile.name));
+                        int functionUtfIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info(((BtcINVOKE) instr).name));
+
+                        BtcMETHOD callee = BtcGen.btcClasses.peek().getMethod(((BtcINVOKE) instr).name);
+
+                        String typeDescriptor = "(";
+
+                        for (BtcMETHOD.Type parType : callee.parTypes()) {
+                            switch (parType) {
+                                case INT -> typeDescriptor += "I";
+                                case FLOAT -> typeDescriptor += "F";
+                                case LONG -> typeDescriptor += "J";
+                                case DOUBLE -> typeDescriptor += "D";
+                                case BOOL -> typeDescriptor += "Z";
+                                case STRING -> typeDescriptor += "Ljava/lang/String;";
+                            }
+                        }
+
+                        typeDescriptor += ")" + switch (callee.ret) {
+                            case INT -> "I";
+                            case FLOAT -> "F";
+                            case LONG -> "J";
+                            case DOUBLE -> "D";
+                            case BOOL -> "Z";
+                            case STRING -> "Ljava/lang/String;";
+                            // TODO: Fix arrays and pointers.
+                            //case ARRAY -> "[" + method.retSubType;
+                            //case OBJECT -> "L" + method.retSubType + ";";
+                            case VOID -> "V";
+                            default -> throw new Report.InternalError();
+                        };
+
+                        int descriptorIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info(typeDescriptor));
+
+                        int nameAndTypeIndex = currentClassFile.addConstPoolInfo(new EmtNameAndTypeInfo(functionUtfIndex, descriptorIndex));
+                        int classIndex = currentClassFile.addConstPoolInfo(new EmtClassInfo(classUtfIndex));
+                        int methodRefIndex = currentClassFile.addConstPoolInfo(new EmtMethodrefInfo(classIndex, nameAndTypeIndex));
+                        code.putShort((short) methodRefIndex);
+                    }
+                }
+                case DYNAMIC -> {
+                    // TODO: Implement
+                    code.put((byte) 0);
+                    code.put((byte) 0);
+                }
+                case INTERFACE -> {
+                    // TODO: Implement
+                    code.put((byte) 0);
+                }
+            }
 
         } else if (instr instanceof BtcNEWARRAY) {
+            code.put((byte) instr.opcode());
+            int atype = switch (((BtcNEWARRAY) instr).type) {
+                case BOOLEAN -> 4;
+                case CHAR -> 5;
+                case FLOAT -> 6;
+                case DOUBLE -> 7;
+                case BYTE -> 8;
+                case SHORT -> 9;
+                case INT -> 10;
+                case LONG -> 11;
+                case REF -> -1;
+            };
+
+            if (((BtcNEWARRAY) instr).type != BtcNEWARRAY.Type.REF) {
+                code.put((byte) atype);
+            } else {
+                // TODO: Implement reference arrays
+            }
 
         } else if (instr instanceof BtcMULTIANEWARRAY) {
 

@@ -20,6 +20,8 @@ public class BtcEmt implements AutoCloseable {
 
     public static HashMap<BtcMETHOD, EmtMethodrefInfo> methodRefs = new HashMap<>();
 
+    public static HashMap<EmtFieldrefInfo, Integer> fieldRefConstPoolIndices = new HashMap<>();
+
     /**
      * Constructs a new phase for JVM bytecode emission.
      */

@@ -1,0 +1,4 @@
+fun main(): void = putChar('a');
+
+fun putInt(i : int) : void = none;
+fun putChar(c : char): void = none;

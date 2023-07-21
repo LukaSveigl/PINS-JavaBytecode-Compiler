@@ -10,7 +10,7 @@ import pins.data.btc.method.instr.BtcInstr;
 public class BtcASTORE extends BtcInstr {
 
     public enum Type {
-        CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE
+        CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, REF
     }
 
     /** The type of the array. */
@@ -33,6 +33,7 @@ public class BtcASTORE extends BtcInstr {
             case BYTE -> BtcInstr.opcodes.get("BASTORE");
             case CHAR -> BtcInstr.opcodes.get("CASTORE");
             case SHORT -> BtcInstr.opcodes.get("SASTORE");
+            case REF -> BtcInstr.opcodes.get("ASTORE");
         };
     }
 

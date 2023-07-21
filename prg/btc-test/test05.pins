@@ -1,0 +1,34 @@
+fun main(): void = ({
+    x = 7;
+
+    y = 10;
+
+    putInt(fib(x));
+    putChar(endl());
+    putInt(fib(y));
+}
+where
+    var x: int;
+);
+
+var y: int;
+
+fun fib(n: int): int = ({
+    if n <= 1 then
+        ret = n;
+    else
+        ret = fib(n - 1) + fib(n - 2);
+    end;
+
+    ret;
+}
+where
+    var ret: int;
+);
+
+
+#{ Forward declarations }#
+
+fun endl() : char = (10 : char);
+fun putInt(i: int): void = none;
+fun putChar(c: char): void = none;
