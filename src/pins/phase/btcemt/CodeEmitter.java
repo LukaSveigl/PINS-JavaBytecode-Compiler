@@ -30,8 +30,6 @@ public class CodeEmitter {
                 throw new Report.Error("Cannot create file " + dstFileName);
             }
 
-
-
             try {
                 this.dstFile.write(classFile.bytecode());
             } catch (IOException e) {

@@ -1,0 +1,25 @@
+fun main(): void = ({
+    counter = 0;
+
+    while counter < 10 do
+        x[counter] = counter;
+        counter = counter + 1;
+    end;
+
+    counter = 0;
+
+    while counter < 10 do
+        putInt(x[counter]);
+        putChar(endl());
+        counter = counter + 1;
+    end;
+}
+where
+    var counter: int;
+);
+
+var x: [10]int;
+
+fun putInt(i: int): void = none;
+fun putChar(c: char): void = none;
+fun endl(): char = (10 : char);

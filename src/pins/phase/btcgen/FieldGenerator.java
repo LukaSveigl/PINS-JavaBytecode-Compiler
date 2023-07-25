@@ -45,7 +45,10 @@ public class FieldGenerator implements AstVisitor<BtcFIELD, BtcCLASS> {
                 subType = BtcFIELD.Type.INT;
             } else if (ptrType.baseType instanceof SemPtr) {
                 subType = BtcFIELD.Type.OBJECT;
-            } else {
+            } else if (ptrType.baseType instanceof SemArr) {
+                subType = BtcFIELD.Type.ARRAY;
+            }
+            else {
                 throw new Report.InternalError();
             }
         } else {

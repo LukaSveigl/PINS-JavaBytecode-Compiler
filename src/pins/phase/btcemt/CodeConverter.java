@@ -9,18 +9,14 @@ import pins.data.btc.method.instr.object.*;
 import pins.data.btc.method.instr.ctrl.*;
 import pins.data.btc.method.instr.arithm.*;
 import pins.data.btc.var.BtcFIELD;
-import pins.data.btc.var.BtcLOCAL;
 import pins.data.emt.EmtClassFile;
 import pins.data.emt.attr.EmtAttributeInfo;
 import pins.data.emt.constp.*;
 import pins.data.emt.field.EmtFieldInfo;
 import pins.data.emt.method.EmtMethodInfo;
-import pins.data.mem.MemRelAccess;
 import pins.phase.btcgen.BtcGen;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.HashMap;
 import java.util.Vector;
 
 public class CodeConverter {
@@ -36,8 +32,6 @@ public class CodeConverter {
     private void convertClass(BtcCLASS btcCLASS) {
         currentClassFile = new EmtClassFile(btcCLASS.name, btcCLASS.dstName);
         BtcEmt.classFiles.put(btcCLASS, currentClassFile);
-        // Convert class fields.
-        // Generate const pool etc.
         for (BtcFIELD field : btcCLASS.fields().values()) {
             convertField(field);
         }
@@ -93,7 +87,6 @@ public class CodeConverter {
             int index = currentClassFile.addConstPoolInfo(emtFieldrefInfo);
             BtcEmt.fieldRefs.put(field, emtFieldrefInfo);
             BtcEmt.fieldRefConstPoolIndices.put(emtFieldrefInfo, index);
-
         } else {
             int descriptorIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info(typeDescriptor));
             currentClassFile.addFieldInfo(new EmtFieldInfo(flags, nameIndex, descriptorIndex, 0, null));
@@ -107,8 +100,6 @@ public class CodeConverter {
     }
 
     private void convertMethod(BtcMETHOD method) {
-        // Convert method.
-
         Vector<EmtMethodInfo.AccessFlag> flags = new Vector<>();
         for (BtcMETHOD.Flags flag : method.flags()) {
             switch (flag) {
@@ -143,6 +134,8 @@ public class CodeConverter {
                     case DOUBLE -> typeDescriptor += "D";
                     case BOOL -> typeDescriptor += "Z";
                     case STRING -> typeDescriptor += "Ljava/lang/String;";
+                    // TODO: Make arrays a viable parameter type.
+                    case ARRAY -> typeDescriptor += "[J";
                 }
             }
 
@@ -153,7 +146,7 @@ public class CodeConverter {
                 case DOUBLE -> "D";
                 case BOOL -> "Z";
                 case STRING -> "Ljava/lang/String;";
-                // TODO: Fix arrays and pointers.
+                // As per the specification, the return type of function cannot be an array.
                 //case ARRAY -> "[" + method.retSubType;
                 //case OBJECT -> "L" + method.retSubType + ";";
                 case VOID -> "V";
@@ -182,8 +175,6 @@ public class CodeConverter {
             instrSize += instr.size();
         }
 
-        System.out.println("Method " + method.name + " has " + instrSize + " instructions.");
-
         ByteBuffer code = ByteBuffer.allocate(instrSize + 2 + 4 + 2 + 2 + 2);
 
         code.putShort((short) 256); // Max stack size.
@@ -194,26 +185,12 @@ public class CodeConverter {
 
         for (BtcInstr instr : method.instrs()) { // Code.
             byte[] instrCode = convertInstruction(instr);
-            //code.put(convertInstruction(instr));
             code.put(instrCode);
             codeSize += instrCode.length;
         }
 
-        System.out.println("Code size: " + codeSize);
-
         code.putShort((short) 0); // Exception table length.
         code.putShort((short) 0); // Attributes count.
-
-        System.out.println("Method name: " + method.name);
-        int i = 0;
-        for (byte b : code.array()) {
-            System.out.print(Byte.toUnsignedInt(b) + " ");
-            if (i % 10 == 0 && i != 0) {
-                System.out.println();
-            }
-            i++;
-        }
-        System.out.println();
 
         EmtAttributeInfo codeAttribute = new EmtAttributeInfo(codeAttributeIndex, code.array().length, code.array());
 
@@ -226,15 +203,11 @@ public class CodeConverter {
             attributes.add(stackMapTable);
         }
 
-        System.out.println("Method: " + method.name);
-        System.out.println("Instruction size: " + method.instrCount());
-
         currentClassFile.addMethodInfo(new EmtMethodInfo(flags, nameIndex, descriptorIndex, attributes.size(), attributes));
     }
 
     private byte[] convertInstruction(BtcInstr instr) {
         ByteBuffer code = ByteBuffer.allocate(instr.size());
-        // Convert instruction.
         // Stack instructions.
         if (instr instanceof BtcCONST) {
             code.put((byte) instr.opcode());
@@ -247,19 +220,16 @@ public class CodeConverter {
                     code = ByteBuffer.allocate(2);
                     code.put((byte) 0x12);
                     code.put((byte) index);
-                    System.out.println("LDC " + index);
                 } else {
                     code = ByteBuffer.allocate(3);
                     code.put((byte) 0x13);
                     code.putShort((short) index);
-                    System.out.println("LDC_W " + index);
                 }
             } else {
                 code = ByteBuffer.allocate(3);
                 int index = currentClassFile.addConstPoolInfo(new EmtLongInfo(((BtcLDC) instr).value));
                 code.put((byte) 0x14);
                 code.putShort((short) index);
-                System.out.println("LDC2_W " + index);
             }
         } else if (instr instanceof BtcLOAD) {
             code.put((byte) instr.opcode());
@@ -284,10 +254,6 @@ public class CodeConverter {
         else if (instr instanceof BtcACCESS) {
             code.put((byte) instr.opcode());
             EmtFieldrefInfo fieldrefInfo = BtcEmt.fieldRefs.get(((BtcACCESS) instr).field);
-            System.out.println("\n\n\nFIELDREF: ");
-            System.out.println(((BtcACCESS) instr).field);
-            System.out.println(fieldrefInfo);
-            System.out.println(BtcEmt.fieldRefConstPoolIndices.get(fieldrefInfo));
             int index = BtcEmt.fieldRefConstPoolIndices.get(fieldrefInfo);
             code.putShort((short) index);
         } else if (instr instanceof BtcALOAD) {
@@ -316,8 +282,6 @@ public class CodeConverter {
                         int methodRefIndex = currentClassFile.addConstPoolInfo(new EmtMethodrefInfo(classIndex, nameAndTypeIndex));
                         code.putShort((short) methodRefIndex);
                     } else if (((BtcINVOKE) instr).name.contains(":")) {
-                        //String example = "java/lang/System.console:()Ljava/io/Console;";
-
                         String classUtf = ((BtcINVOKE) instr).name.split("\\.")[0];
                         String methodUtf = ((BtcINVOKE) instr).name.split("\\.")[1].split(":")[0];
                         String descriptorUtf = ((BtcINVOKE) instr).name.split(":")[1];
@@ -346,6 +310,8 @@ public class CodeConverter {
                                 case DOUBLE -> typeDescriptor += "D";
                                 case BOOL -> typeDescriptor += "Z";
                                 case STRING -> typeDescriptor += "Ljava/lang/String;";
+                                // TODO: Fix arrays and pointers.
+                                case ARRAY -> typeDescriptor += "[J";
                             }
                         }
 
@@ -372,16 +338,13 @@ public class CodeConverter {
                     }
                 }
                 case DYNAMIC -> {
-                    // TODO: Implement
                     code.put((byte) 0);
                     code.put((byte) 0);
                 }
                 case INTERFACE -> {
-                    // TODO: Implement
                     code.put((byte) 0);
                 }
             }
-
         } else if (instr instanceof BtcNEWARRAY) {
             code.put((byte) instr.opcode());
             int atype = switch (((BtcNEWARRAY) instr).type) {
@@ -403,20 +366,12 @@ public class CodeConverter {
             }
 
         } else if (instr instanceof BtcMULTIANEWARRAY) {
-
+            // TODO: Implement multi-arrays
         }
         // Control flow instructions.
         else if (instr instanceof BtcCJUMP) {
             code.put((byte) instr.opcode());
             code.putShort((short) (((BtcCJUMP) instr).target - instr.index));
-            System.out.println("Generating CJUMP " + instr.opcode() + " to " + ((BtcCJUMP) instr).target);
-            System.out.println("Instr index: " + instr.index);
-            System.out.println("Instr size: " + instr.size());
-            System.out.println("Short target: " + (short)(((BtcCJUMP) instr).target));
-            for (byte b : code.array()) {
-                System.out.print(b + " ");
-            }
-            System.out.println();
         } else if (instr instanceof BtcGOTO) {
             code.put((byte) instr.opcode());
             if (((BtcGOTO) instr).target < 0xffff) {

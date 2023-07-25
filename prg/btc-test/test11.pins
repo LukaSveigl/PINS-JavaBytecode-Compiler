@@ -1,0 +1,28 @@
+fun main(): void = ({
+    doStuff(^x);
+
+    counter = 0;
+
+    while counter < 5 do
+        putInt(x[counter]);
+        counter = counter + 1;
+    end;
+}
+where
+    var x: [5]int;
+    var counter: int;
+);
+
+fun doStuff(x: ^[5]int) : void = ({
+    counter = 0;
+
+    while counter < 5 do
+        x^[counter] = counter;
+        counter = counter + 1;
+    end;
+}
+where
+    var counter: int;
+);
+
+fun putInt(i: int): void = none;

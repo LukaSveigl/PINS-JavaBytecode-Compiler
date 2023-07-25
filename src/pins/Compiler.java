@@ -168,18 +168,11 @@ public class Compiler {
 						System.out.println(cmdLine.get("--dst-file-name"));
 						ast.accept(new ClassGenerator(cmdLine.get("--dst-file-name")), null);
 
-						for (BtcCLASS btcClass : BtcGen.btcClasses) {
-							btcClass.log("");
-						}
-
 						CodeConverter codeConverter = new CodeConverter();
 						codeConverter.convert();
 
 						CodeEmitter codeEmitter = new CodeEmitter();
 						codeEmitter.emit();
-
-						//BtcEmitter btcemit = new BtcEmitter(cmdLine.get("--dst-file-name"));
-						//btcemit.emit();
 					}
 					break;
 				}

@@ -1,0 +1,35 @@
+fun main(): void = ({
+    x = new 10;
+    counter = 0;
+
+    while counter < 10 do
+        #{ Pst -> Cast -> Add -> Cast }#
+        (((x: int) + counter) : ^int)^ = counter;
+        counter = counter + 1;
+    end;
+
+    counter = 0;
+
+    while counter < 10 do
+        (((x: int) + counter) : ^int)^ = (((x: int) + counter) : ^int)^ + (((x: int) + counter) : ^int)^;
+        counter = counter + 1;
+    end;
+
+    counter = 0;
+
+    while counter < 10 do
+        putInt((((x: int) + counter) : ^int)^);
+        putChar(endl());
+        counter = counter + 1;
+    end;
+
+    putChar(endl());
+}
+where
+    var x: ^int;
+    var counter: int;
+);
+
+fun putInt(i: int): void = none;
+fun putChar(c: char): void = none;
+fun endl(): char = (10 : char);
