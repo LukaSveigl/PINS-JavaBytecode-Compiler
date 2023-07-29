@@ -5,10 +5,16 @@ import pins.data.btc.method.instr.BtcInstr;
 /**
  * A multi array instruction.
  * <p>
- * Creates a new multi-dimensional array. The sizes of the dimensions are popped from the stack. The array reference is
+ * Creates a new multidimensional array. The sizes of the dimensions are popped from the stack. The array reference is
  * pushed back.
  */
 public class BtcMULTIANEWARRAY extends BtcInstr {
+
+    public enum Type {
+        BOOLEAN, CHAR, FLOAT, DOUBLE, BYTE, SHORT, INT, LONG, REF
+    }
+
+    public final Type type;
 
     /** The array dimensions type. */
     public final int dimensions;
@@ -21,9 +27,10 @@ public class BtcMULTIANEWARRAY extends BtcInstr {
      * @param index      The instruction index.
      * @param dimensions The array dimensions type.
      */
-    public BtcMULTIANEWARRAY(int index, int dimensions) {
+    public BtcMULTIANEWARRAY(int index, int dimensions, Type type) {
         super(index);
         this.dimensions = dimensions;
+        this.type = type;
         this.opcode = BtcInstr.opcodes.get("MULTIANEWARRAY");
     }
 

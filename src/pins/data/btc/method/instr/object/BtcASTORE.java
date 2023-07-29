@@ -33,7 +33,7 @@ public class BtcASTORE extends BtcInstr {
             case BYTE -> BtcInstr.opcodes.get("BASTORE");
             case CHAR -> BtcInstr.opcodes.get("CASTORE");
             case SHORT -> BtcInstr.opcodes.get("SASTORE");
-            case REF -> BtcInstr.opcodes.get("ASTORE");
+            case REF -> BtcInstr.opcodes.get("AASTORE");
         };
     }
 

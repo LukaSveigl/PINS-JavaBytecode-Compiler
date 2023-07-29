@@ -5,11 +5,11 @@ import pins.data.ast.AstVarDecl;
 import pins.data.ast.visitor.AstVisitor;
 import pins.data.btc.BtcCLASS;
 import pins.data.btc.var.BtcFIELD;
-import pins.data.typ.SemArr;
-import pins.data.typ.SemChar;
-import pins.data.typ.SemInt;
-import pins.data.typ.SemPtr;
+import pins.data.btc.var.BtcVar;
+import pins.data.typ.*;
 import pins.phase.seman.SemAn;
+
+import java.util.Stack;
 
 /**
  * Bytecode class field generator.
@@ -19,34 +19,62 @@ public class FieldGenerator implements AstVisitor<BtcFIELD, BtcCLASS> {
     @Override
     public BtcFIELD visit(AstVarDecl varDecl, BtcCLASS btcClass) {
         BtcFIELD.Type type = null;
-        BtcFIELD.Type subType = null;
+        Stack<BtcFIELD.Type> subTypes = new Stack<>();
         if (SemAn.describesType.get(varDecl.type) instanceof SemInt) {
             type = BtcFIELD.Type.LONG;
         } else if (SemAn.describesType.get(varDecl.type) instanceof SemChar) {
             type = BtcFIELD.Type.INT;
         } else if (SemAn.describesType.get(varDecl.type) instanceof SemArr) {
             type = BtcFIELD.Type.ARRAY;
-            SemArr arrType =  (SemArr) SemAn.describesType.get(varDecl.type);
+            SemArr arrType = (SemArr) SemAn.describesType.get(varDecl.type);
             if (arrType.elemType instanceof SemInt) {
-                subType = BtcFIELD.Type.LONG;
+                subTypes.add(BtcFIELD.Type.LONG);
+                //subType = BtcFIELD.Type.LONG;
             } else if (arrType.elemType instanceof SemChar) {
-                subType = BtcFIELD.Type.INT;
+                subTypes.add(BtcFIELD.Type.INT);
+                //subType = BtcFIELD.Type.INT;
             } else if (arrType.elemType instanceof SemPtr) {
-                subType = BtcFIELD.Type.OBJECT;
-            } else {
+                subTypes.add(BtcFIELD.Type.OBJECT);
+                //subType = BtcFIELD.Type.OBJECT;
+            } else if (arrType.elemType instanceof SemArr) {
+                subTypes.add(BtcFIELD.Type.ARRAY);
+
+                SemType elemType = ((SemArr) arrType.elemType).elemType;
+                do {
+                    if (elemType instanceof SemArr) {
+                        subTypes.add(BtcFIELD.Type.ARRAY);
+                        elemType = ((SemArr) elemType).elemType;
+                    } else if (elemType instanceof SemInt) {
+                        subTypes.add(BtcFIELD.Type.LONG);
+                        break;
+                    } else if (elemType instanceof SemChar) {
+                        subTypes.add(BtcFIELD.Type.INT);
+                        break;
+                    } else if (elemType instanceof SemPtr) {
+                        // TODO: Implement this.
+                    } else {
+                        throw new Report.InternalError();
+                    }
+                } while (true);
+                //subType = BtcFIELD.Type.ARRAY;
+            }else {
                 throw new Report.InternalError();
             }
         } else if (SemAn.describesType.get(varDecl.type) instanceof SemPtr) {
             type = BtcFIELD.Type.OBJECT;
             SemPtr ptrType = (SemPtr) SemAn.describesType.get(varDecl.type);
             if (ptrType.baseType instanceof SemInt) {
-                subType = BtcFIELD.Type.LONG;
+                subTypes.add(BtcFIELD.Type.LONG);
+                //subType = BtcFIELD.Type.LONG;
             } else if (ptrType.baseType instanceof SemChar) {
-                subType = BtcFIELD.Type.INT;
+                subTypes.add(BtcFIELD.Type.INT);
+                //subType = BtcFIELD.Type.INT;
             } else if (ptrType.baseType instanceof SemPtr) {
-                subType = BtcFIELD.Type.OBJECT;
+                subTypes.add(BtcFIELD.Type.OBJECT);
+                //subType = BtcFIELD.Type.OBJECT;
             } else if (ptrType.baseType instanceof SemArr) {
-                subType = BtcFIELD.Type.ARRAY;
+                subTypes.add(BtcFIELD.Type.ARRAY);
+                //subType = BtcFIELD.Type.ARRAY;
             }
             else {
                 throw new Report.InternalError();
@@ -56,7 +84,7 @@ public class FieldGenerator implements AstVisitor<BtcFIELD, BtcCLASS> {
         }
         // NOTE: If a new type is added, add it here.
 
-        BtcFIELD field = new BtcFIELD(varDecl.name, type, subType);
+        BtcFIELD field = new BtcFIELD(varDecl.name, type, subTypes);
         btcClass.addField(varDecl, field);
         return field;
     }

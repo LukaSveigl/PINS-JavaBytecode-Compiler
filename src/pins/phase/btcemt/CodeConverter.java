@@ -72,8 +72,22 @@ public class CodeConverter {
             case BOOL -> typeDescriptor = "Z";
             case STRING -> typeDescriptor = "Ljava/lang/String;";
             // TODO: Fix arrays to include multiple dimensions.
-            case ARRAY -> typeDescriptor = "[" + field.subType;
-            case OBJECT -> typeDescriptor = "L" + field.subType + ";";
+            //case ARRAY -> typeDescriptor = "[" + field.subType;
+            //case OBJECT -> typeDescriptor = "L" + field.subType + ";";
+            case ARRAY -> {
+                typeDescriptor += "[";
+
+                for (BtcFIELD.Type type : field.subTypes) {
+                    switch (type) {
+                        case ARRAY -> typeDescriptor += "[";
+                        case BOOL -> typeDescriptor += "Z";
+                        case DOUBLE -> typeDescriptor += "D";
+                        case FLOAT -> typeDescriptor += "F";
+                        case INT -> typeDescriptor += "I";
+                        case LONG -> typeDescriptor += "J";
+                    }
+                }
+            }
         }
 
         if (field.name.equals("PrintStream")) {
@@ -366,7 +380,29 @@ public class CodeConverter {
             }
 
         } else if (instr instanceof BtcMULTIANEWARRAY) {
-            // TODO: Implement multi-arrays
+            String classValue = "";
+
+            for (int i = 0; i < ((BtcMULTIANEWARRAY) instr).dimensions; i++) {
+                classValue += "[";
+            }
+
+            switch (((BtcMULTIANEWARRAY) instr).type) {
+                case BOOLEAN -> classValue += "Z";
+                case CHAR -> classValue += "C";
+                case FLOAT -> classValue += "F";
+                case DOUBLE -> classValue += "D";
+                case BYTE -> classValue += "B";
+                case SHORT -> classValue += "S";
+                case INT -> classValue += "I";
+                case LONG -> classValue += "J";
+            }
+
+            int classUtfIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info(classValue));
+            int classInfoIndex = currentClassFile.addConstPoolInfo(new EmtClassInfo(classUtfIndex));
+
+            code.put((byte) instr.opcode());
+            code.putShort((short) classInfoIndex);
+            code.put((byte) ((BtcMULTIANEWARRAY) instr).dimensions);
         }
         // Control flow instructions.
         else if (instr instanceof BtcCJUMP) {

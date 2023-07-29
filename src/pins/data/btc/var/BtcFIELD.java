@@ -1,5 +1,6 @@
 package pins.data.btc.var;
 
+import java.util.Stack;
 import java.util.Vector;
 
 /**
@@ -12,7 +13,8 @@ public class BtcFIELD extends BtcVar {
     }
 
     /** The optional field subtype, in case of array or pointer. */
-    public final Type subType;
+    //public final Type subType;
+    public final Stack<Type> subTypes;
 
     /** The field name. */
     public final String name;
@@ -26,12 +28,12 @@ public class BtcFIELD extends BtcVar {
      * @param name The field name.
      * @param type The field type.
      */
-    public BtcFIELD(String name, Type type, Type subType) {
+    public BtcFIELD(String name, Type type, Stack<Type> subType) {
         super(type);
         this.name = name;
         this.flags.add(Flags.PUBLIC);
         this.flags.add(Flags.STATIC);
-        this.subType = subType;
+        this.subTypes = subType;
     }
 
     /**
