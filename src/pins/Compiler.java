@@ -3,13 +3,16 @@ package pins;
 import java.util.*;
 import pins.common.report.*;
 import pins.data.ast.*;
-import pins.data.btc.BtcCLASS;
+import pins.data.mem.MemAccess;
+import pins.data.mem.MemRelAccess;
 import pins.phase.btcemt.BtcEmt;
 import pins.phase.btcemt.CodeConverter;
 import pins.phase.btcemt.CodeEmitter;
 import pins.phase.btcgen.BtcGen;
 import pins.phase.btcgen.ClassGenerator;
 import pins.phase.lexan.*;
+import pins.phase.refan.RefAn;
+import pins.phase.refan.RefEvaluator;
 import pins.phase.synan.*;
 import pins.phase.seman.*;
 import pins.phase.memory.*;
@@ -22,13 +25,13 @@ import pins.phase.imclin.*;
 public class Compiler {
 
 	/** All phases of the compiler. */
-	private static final String phases = "none|lexan|synan|abstr|seman|memory|imcgen|imclin|btcgen";
+	private static final String phases = "none|lexan|synan|abstr|seman|memory|imcgen|imclin|refan|btcgen|btcemt";
 
 	/** The compilation method. */
 	private static final String method = "interp|compile";
 
 	/** Values of command line arguments. */
-	private static HashMap<String, String> cmdLine = new HashMap<String, String>();
+	private static final HashMap<String, String> cmdLine = new HashMap<String, String>();
 
 	public static void main(String[] args) {
 
@@ -151,23 +154,31 @@ public class Compiler {
 				// Linearization of intermediate code.
 				try (ImcLin imclin = new ImcLin()) {
 					ast.accept(new ChunkGenerator(), null);
-
-					//Interpreter interpreter = new Interpreter(ImcLin.dataChunks(), ImcLin.codeChunks());
-					//System.out.println("EXIT CODE: " + interpreter.run("_main"));
 				}
 				if (cmdLine.get("--target-phase").equals("imclin"))
 					break;
 
+				// Interpretation of linearized intermediate code.
 				if (cmdLine.get("--comp-method").equals("interp")) {
 					Interpreter interpreter = new Interpreter(ImcLin.dataChunks(), ImcLin.codeChunks());
 					System.out.println("EXIT CODE: " + interpreter.run("_main"));
 					break;
 				}
+				// Compilation of the AST to JVM code.
 				if (cmdLine.get("--comp-method").equals("compile")) {
-					try (BtcGen btcgen = new BtcGen(); BtcEmt btcemt = new BtcEmt()) {
-						System.out.println(cmdLine.get("--dst-file-name"));
+					try (RefAn refan = new RefAn(); BtcGen btcgen = new BtcGen(); BtcEmt btcemt = new BtcEmt()) {
+
+						// Reference analysis.
+						ast.accept(new RefEvaluator(), null);
+
+						for (Map.Entry<MemAccess, Integer> mapping : RefAn.referenceCandidates.entrySet()) {
+							System.out.println(mapping.getKey() + " " + mapping.getValue());
+						}
+
+						// Bytecode generation.
 						ast.accept(new ClassGenerator(cmdLine.get("--dst-file-name")), null);
 
+						// Bytecode emission.
 						CodeConverter codeConverter = new CodeConverter();
 						codeConverter.convert();
 

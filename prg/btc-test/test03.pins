@@ -1,19 +1,122 @@
-fun main(): void = ({
-    x = 2;
-    y = 2;
+#{ test03.pins: Arrays/array manipulation and loops. }#
 
-    if x == 2 then
-        x = x + 4 + y;
-    else
-        x = x - 4 - y;
+fun main(): void = ({
+    count1 = 0;
+
+    putChar('k');
+
+    while (count1 < 5) do
+        arr1[count1] = count1 * 2;
+        putChar('k');
+        carr1[count1] = 'a';
+        count1 = count1 + 1;
     end;
 
-    putInt(x);
+    count1 = 0;
+    count2 = 0;
+
+    while (count1 < 5) do
+        while (count2 < 5) do
+            arr2[count1][count2] = count1 * count2;
+            carr2[count1][count2] = 'b';
+            count2 = count2 + 1;
+        end;
+        count2 = 0;
+        count1 = count1 + 1;
+    end;
+
+
+    count1 = 0;
+    count2 = 0;
+    count3 = 0;
+
+    while (count1 < 5) do
+        while (count2 < 5) do
+            while (count3 < 5) do
+                arr3[count1][count2][count3] = count1 * count2 * count3;
+                count3 = count3 + 1;
+            end;
+            count3 = 0;
+            count2 = count2 + 1;
+        end;
+        count2 = 0;
+        count1 = count1 + 1;
+    end;
+
+    count1 = 0;
+
+    while (count1 < 5) do
+        putInt(arr1[count1]);
+        putChar(carr1[count1]);
+        count1 = count1 + 1;
+    end;
+
+    putChar(endl());
+    putChar('-');
+    putChar(endl());
+
+    count1 = 0;
+    count2 = 0;
+
+    while (count1 < 5) do
+        while (count2 < 5) do
+            putInt(arr2[count1][count2]);
+            putChar(carr2[count1][count2]);
+            count2 = count2 + 1;
+            putChar(' ');
+        end;
+        putChar(endl());
+        count2 = 0;
+        count1 = count1 + 1;
+    end;
+
+    putChar(endl());
+    putChar('-');
+    putChar(endl());
+
+    count1 = 0;
+    count2 = 0;
+    count3 = 0;
+
+    while (count1 < 5) do
+        while (count2 < 5) do
+            while (count3 < 5) do
+                putInt(arr3[count1][count2][count3]);
+                count3 = count3 + 1;
+                putChar(' ');
+            end;
+            putChar(endl());
+            count3 = 0;
+            count2 = count2 + 1;
+        end;
+        putChar(endl());
+        count2 = 0;
+        count1 = count1 + 1;
+    end;
 }
 where
-    var x: int;
+    var count1: int;
+    var count2: int;
+    var count3: int;
+
+    var arr1: [5]int;
+    var arr2: [5][5]int;
+    var arr3: [5][5][5]int;
 );
 
-var y: int;
+var carr1: [5]char;
+var carr2: [5][5]char;
+
+
+#{ Utilities }#
+
+fun endl(): char = (10 : char);
+
+
+#{ Forward declarations: }#
 
 fun putInt(i: int): void = none;
+fun getInt(): int = 0;
+
+fun putChar(c: char): void = none;
+fun getChar(): char = 'a';

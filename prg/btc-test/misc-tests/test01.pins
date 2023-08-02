@@ -1,0 +1,50 @@
+fun test(x: int): int = ({
+    x = x + 1;
+    x = x * 2;
+    z = 'x';
+    x;
+});
+
+var z: char;
+var Z: int;
+
+fun main(): char = ({
+    x = 3;
+
+    if x == 3 then
+        y = 'a';
+    else
+        y = 'b';
+    end;
+
+    y;
+}
+where
+    var x: int;
+    var y: char;
+);
+
+fun whileTest(): void = ({
+    a = 0;
+    while a < 10 do
+        a = a + 1;
+    end;
+}
+where
+    var a: int;
+);
+
+fun swap(x: int, y: int): void = ({
+    tmp = x;
+    x = y;
+    y = tmp;
+}
+where
+    var tmp: int;
+);
+
+fun wtf(): void = ({
+    if 1 == 1 then
+        swap(1, 1);
+    end;
+});

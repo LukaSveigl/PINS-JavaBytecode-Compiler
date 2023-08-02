@@ -1,0 +1,21 @@
+fun main(): void = ({
+    x = new 10;
+    counter = 0;
+
+    (((x: int) + 0) : ^int)^ = 27;
+
+    putInt((((x: int) + 0) : ^int)^);
+
+    (((x: int) + 1) : ^int)^ = (((x: int) + 0) : ^int)^;
+
+    putInt((((x: int) + 0) : ^int)^);
+    putInt((((x: int) + 1) : ^int)^);
+}
+where
+    var x: ^int;
+    var counter: int;
+);
+
+fun putInt(i: int): void = none;
+fun putChar(c: char): void = none;
+fun endl(): char = (10 : char);

@@ -1,15 +1,95 @@
-fun main(): void = {
-    x = getInt();
-    putInt(x);
-    y = getChar();
-    putChar(y);
-};
+#{ test07.pins: Quicksort: pointers, arrays, function calls and recursion. }#
 
-var x: int;
-var y: char;
+fun main(): void = ({
+    fill(^array, 10);
+    print(^array, 10);
+    quick(^array, 0, 9);
+    print(^array, 10);
+}
+where
+    var array : [10]int;
+);
+
+fun quick(array : ^[10]int, low : int, high : int) : void = ({
+    if (low < high) then
+        mid = partition(array, low, high);
+        quick(array, low, mid - 1);
+        quick(array, mid + 1, high);
+    end;
+}
+where
+    var mid : int;
+);
+
+fun partition(array : ^[10]int, low : int, high : int) : int = ({
+    pivot = array^[high];
+    i = low - 1;
+    j = low;
+    while (j < high) do
+        if (array^[j] <= pivot) then
+            i = i + 1;
+            swap(array, i, j);
+        end;
+        j = j + 1;
+    end;
+    swap(array, i + 1, high);
+    i + 1;
+}
+where
+    var i : int;
+    var j : int;
+    var pivot : int;
+);
+
+fun swap(array : ^[10]int, i : int, j : int) : void = ({
+    temp = array^[i];
+    array^[i] = array^[j];
+    array^[j] = temp;
+}
+where
+    var temp : int;
+);
+
+fun fill(array : ^[10]int, size : int) : void = ({
+    array^[0] = 5;
+    array^[1] = 2;
+    array^[2] = 7;
+    array^[3] = 3;
+    array^[4] = 9;
+    array^[5] = 1;
+    array^[6] = 8;
+    array^[7] = 4;
+    array^[8] = 6;
+    array^[9] = 0;
+}
+where
+    var i : int;
+    var rand : int;
+);
+
+fun print(array : ^[10]int, size : int) : void = ({
+    i = 0;
+    while (i < size) do
+        putInt((array^)[i]);
+        putChar(' ');
+        i = i + 1;
+    end;
+    putChar(endl());
+}
+where
+    var i : int;
+);
+
+
+#{ Utilities }#
+
+fun endl(): char = (10 : char);
+
+
+#{ Forward declarations: }#
 
 fun putInt(i: int): void = none;
 fun getInt(): int = 0;
 
 fun putChar(c: char): void = none;
-fun getChar(): char = (0 : char);
+fun getChar(): char = 'a';

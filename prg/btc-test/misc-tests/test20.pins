@@ -1,0 +1,22 @@
+fun main(): void = ({
+    x = 4;
+    y = 2;
+    z = 3;
+
+    #{if x < y | y < z & x < z | x < y then}#
+    #{if x < y & y < z & x < z then}#
+    #{if x < y & y < z then}#
+
+    if x < y | y < z | x < z then
+        putChar('y');
+    else
+        putChar('n');
+    end;
+}
+where
+    var x: int;
+    var y: int;
+    var z: int;
+);
+
+fun putChar(c: char): void = none;

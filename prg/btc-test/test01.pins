@@ -1,50 +1,39 @@
-fun test(x: int): int = ({
-    x = x + 1;
-    x = x * 2;
-    z = 'x';
-    x;
-});
+#{ test01.pins: Basic input/output builtin functions. }#
 
-var z: char;
-var Z: int;
+fun main(): void = ({
+    putChar('x'); putChar(':'); putChar(' ');
+    x = getInt();
 
-fun main(): char = ({
-    x = 3;
+    putChar(endl());
 
-    if x == 3 then
-        y = 'a';
-    else
-        y = 'b';
-    end;
+    putChar('c'); putChar(':'); putChar(' ');
+    c = getChar();
 
-    y;
+    putChar(endl());
+
+    putChar('x'); putChar(' '); putChar('='); putChar(' ');
+    putInt(x);
+
+    putChar(endl());
+
+    putChar('c'); putChar(' '); putChar('='); putChar(' ');
+    putChar(c);
 }
 where
     var x: int;
-    var y: char;
+    var c: char;
 );
 
-fun whileTest(): void = ({
-    a = 0;
-    while a < 10 do
-        a = a + 1;
-    end;
-}
-where
-    var a: int;
-);
 
-fun swap(x: int, y: int): void = ({
-    tmp = x;
-    x = y;
-    y = tmp;
-}
-where
-    var tmp: int;
-);
+#{ Utilities }#
 
-fun wtf(): void = ({
-    if 1 == 1 then
-        swap(1, 1);
-    end;
-});
+fun endl(): char = (10 : char);
+
+
+#{ Forward declarations: }#
+
+fun putInt(i: int): void = none;
+fun getInt(): int = 0;
+
+fun putChar(c: char): void = none;
+fun getChar(): char = 'a';

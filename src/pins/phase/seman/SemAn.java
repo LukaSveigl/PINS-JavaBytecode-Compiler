@@ -4,6 +4,9 @@ import java.util.*;
 import pins.data.ast.*;
 import pins.data.typ.*;
 
+/**
+ * Semantic analysis.
+ */
 public class SemAn implements AutoCloseable {
 
 	/** Maps names to declarations. */

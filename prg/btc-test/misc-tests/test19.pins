@@ -1,0 +1,18 @@
+fun main(): void = ({
+    x = 0;
+    y = 2;
+    z = 4;
+
+    while x < y | y < z do
+        putChar('a');
+        x = x + 1;
+        y = y + 1;
+    end;
+}
+where
+    var x: int;
+    var y: int;
+    var z: int;
+);
+
+fun putChar(c: char): void = none;

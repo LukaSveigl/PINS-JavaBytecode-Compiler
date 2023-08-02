@@ -16,6 +16,7 @@ import pins.data.emt.field.EmtFieldInfo;
 import pins.data.emt.method.EmtMethodInfo;
 import pins.phase.btcgen.BtcGen;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.Vector;
 
@@ -70,6 +71,7 @@ public class CodeConverter {
             case LONG -> typeDescriptor = "J";
             case DOUBLE -> typeDescriptor = "D";
             case BOOL -> typeDescriptor = "Z";
+            case CHAR -> typeDescriptor = "C";
             case STRING -> typeDescriptor = "Ljava/lang/String;";
             // TODO: Fix arrays to include multiple dimensions.
             //case ARRAY -> typeDescriptor = "[" + field.subType;
@@ -85,6 +87,7 @@ public class CodeConverter {
                         case FLOAT -> typeDescriptor += "F";
                         case INT -> typeDescriptor += "I";
                         case LONG -> typeDescriptor += "J";
+                        case CHAR -> typeDescriptor += "C";
                     }
                 }
             }
@@ -114,6 +117,9 @@ public class CodeConverter {
     }
 
     private void convertMethod(BtcMETHOD method) {
+
+        System.out.println("Working on method: " + method.name);
+
         Vector<EmtMethodInfo.AccessFlag> flags = new Vector<>();
         for (BtcMETHOD.Flags flag : method.flags()) {
             switch (flag) {
@@ -150,6 +156,7 @@ public class CodeConverter {
                     case STRING -> typeDescriptor += "Ljava/lang/String;";
                     // TODO: Make arrays a viable parameter type.
                     case ARRAY -> typeDescriptor += "[J";
+                    case OBJECT -> typeDescriptor += "[J";
                 }
             }
 
@@ -162,7 +169,7 @@ public class CodeConverter {
                 case STRING -> "Ljava/lang/String;";
                 // As per the specification, the return type of function cannot be an array.
                 //case ARRAY -> "[" + method.retSubType;
-                //case OBJECT -> "L" + method.retSubType + ";";
+                case OBJECT -> "[J";
                 case VOID -> "V";
                 default -> throw new Report.InternalError();
             };
@@ -178,8 +185,6 @@ public class CodeConverter {
 
         currentClassFile.addConstPoolInfo(methodrefInfo);
 
-        BtcEmt.methodRefs.put(method, methodrefInfo);
-
         // Generate the method code.
 
         int codeAttributeIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info("Code"));
@@ -189,7 +194,12 @@ public class CodeConverter {
             instrSize += instr.size();
         }
 
-        ByteBuffer code = ByteBuffer.allocate(instrSize + 2 + 4 + 2 + 2 + 2);
+        ByteBuffer code = ByteBuffer.allocate(instrSize * 2 + 2 // Max stack
+                + 4 // Code length.
+                + 2 // Exception table length.
+                + 2 // Attributes count.
+                + 2 // Max locals.
+        );
 
         code.putShort((short) 256); // Max stack size.
         code.putShort((short) 256); // Max locals.
@@ -199,12 +209,20 @@ public class CodeConverter {
 
         for (BtcInstr instr : method.instrs()) { // Code.
             byte[] instrCode = convertInstruction(instr);
-            code.put(instrCode);
             codeSize += instrCode.length;
+            code.put(instrCode);
         }
 
         code.putShort((short) 0); // Exception table length.
         code.putShort((short) 0); // Attributes count.
+
+        // Correct the code length in the ByteBuffer. (Offset is 2 bytes for max stack size and 2 bytes for max locals.)
+        code.putInt(2 + 2, codeSize);
+
+        // Correct the ByteBuffer. Remove the extra bytes. (This is a hack.)
+        ByteBuffer adaptedCode = ByteBuffer.allocate(code.position());
+        adaptedCode.put(code.array(), 0, adaptedCode.capacity());
+        code = adaptedCode;
 
         EmtAttributeInfo codeAttribute = new EmtAttributeInfo(codeAttributeIndex, code.array().length, code.array());
 
@@ -212,10 +230,10 @@ public class CodeConverter {
         attributes.add(codeAttribute);
 
         // Generate the stackmaptable attribute.
-        EmtAttributeInfo stackMapTable = generateStackMapTable(method);
-        if (stackMapTable != null) {
-            attributes.add(stackMapTable);
-        }
+        //EmtAttributeInfo stackMapTable = generateStackMapTable(method);
+        //if (stackMapTable != null) {
+        //    attributes.add(stackMapTable);
+        //}
 
         currentClassFile.addMethodInfo(new EmtMethodInfo(flags, nameIndex, descriptorIndex, attributes.size(), attributes));
     }
@@ -326,6 +344,7 @@ public class CodeConverter {
                                 case STRING -> typeDescriptor += "Ljava/lang/String;";
                                 // TODO: Fix arrays and pointers.
                                 case ARRAY -> typeDescriptor += "[J";
+                                case OBJECT -> typeDescriptor += "[J";
                             }
                         }
 
@@ -339,6 +358,7 @@ public class CodeConverter {
                             // TODO: Fix arrays and pointers.
                             //case ARRAY -> "[" + method.retSubType;
                             //case OBJECT -> "L" + method.retSubType + ";";
+                            case OBJECT -> "[J"; // TODO: Fix this.
                             case VOID -> "V";
                             default -> throw new Report.InternalError();
                         };

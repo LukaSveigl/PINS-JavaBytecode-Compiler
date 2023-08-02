@@ -1,4 +1,69 @@
-fun main(): void = putChar('a');
+#{ test02.pins: Function calls and recursion. }#
 
-fun putInt(i : int) : void = none;
-fun putChar(c : char): void = none;
+fun main(): void = {
+    putInt(fibWrapper(10));
+
+    putChar(endl());
+
+    putInt(GCD(100, 50));
+
+    putChar(endl());
+
+    putInt(fib(10));
+};
+
+fun fibWrapper(i: int) : int = ({
+    fib(i);
+}
+where
+    fun fib(n: int): int = ({
+        if (n <= 1) then
+            ret = n;
+        else
+            ret = fib(n - 1) + fib(n - 2);
+        end;
+        ret;
+    }
+    where
+        var ret: int;
+    );
+);
+
+fun fib(n: int): int = ({
+    if n <= 1 then
+        ret = n;
+    else
+        ret = fib(n - 1) + fib(n - 2);
+    end;
+
+    ret;
+}
+where
+    var ret: int;
+);
+
+fun GCD(a : int, b : int) : int = ({
+    if (b == 0) then
+        ret = a;
+    else
+        ret = GCD(b, a % b);
+    end;
+    ret;
+}
+where
+    var ret : int;
+);
+
+
+#{ Utilities }#
+
+fun endl(): char = (10 : char);
+
+
+#{ Forward declarations: }#
+
+fun putInt(i: int): void = none;
+fun getInt(): int = 0;
+
+fun putChar(c: char): void = none;
+fun getChar(): char = 'a';

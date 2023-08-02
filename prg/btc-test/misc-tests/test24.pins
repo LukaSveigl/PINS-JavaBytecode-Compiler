@@ -1,0 +1,19 @@
+fun main(): void = ({
+    a(1);
+    a(2);
+    a(3);
+}
+where
+    fun a(i: int): void = ({
+        b(i);
+    }
+    where
+        fun b(i: int): void = putInt(i);
+    );
+);
+
+fun a(i: int): void = putInt(i);
+
+fun putInt(i: int): void = none;
+fun putChar(c: char): void = none;
+fun endl(): char = (10 : char);

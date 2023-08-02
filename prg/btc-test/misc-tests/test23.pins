@@ -1,0 +1,14 @@
+fun main(): void = ({
+    x = 7;
+    y = ^x;
+    putInt(x);
+    putInt(y^);
+}
+where
+    var x: int;
+    var y: ^int;
+);
+
+fun putInt(i: int): void = none;
+fun putChar(c: char): void = none;
+fun endl(): char = (10 : char);

@@ -1,24 +1,53 @@
 fun main(): void = ({
-    counter = 0;
-
-    while counter < 10 do
-        x[counter] = counter;
-        counter = counter + 1;
-    end;
-
-    counter = 0;
-
-    while counter < 10 do
-        putInt(x[counter]);
-        putChar(endl());
-        counter = counter + 1;
-    end;
+    putChar('a');
+    putChar('b');
+    putChar('c');
+    putChar(endl());
+    putChar('d');
+    putChar('e');
+    putChar('f');
+    putChar(endl());
+    putChar('g');
+    putChar('h');
+    putChar('i');
+    putChar(endl());
+    putChar('j');
+    putChar('k');
+    x = 1;
+    putChar('l');
+    putChar(endl());
+    putChar('m');
+    putChar('n');
+    putChar('o');
+    putChar(endl());
+    putChar('p');
+    putChar('q');
+    putChar('r');
+    putChar(endl());
+    putChar('s');
+    putChar('t');
+    putChar('u');
+    putChar(endl());
+    putChar('v');
+    putChar('w');
+    putChar('x');
+    putChar(endl());
+    putChar('y');
+    putChar('z');
+    putChar(endl());
 }
 where
-    var x: [10]int;
-    var counter: int;
-);
+    var x : int;);
+
+#{ Utilities }#
+
+fun endl(): char = (10 : char);
+
+
+#{ Forward declarations: }#
 
 fun putInt(i: int): void = none;
+fun getInt(): int = 0;
+
 fun putChar(c: char): void = none;
-fun endl(): char = (10 : char);
+fun getChar(): char = 'a';

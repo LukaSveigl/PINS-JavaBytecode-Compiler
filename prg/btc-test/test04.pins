@@ -1,9 +1,56 @@
-fun main(): void = putInt(add(getConstOne(), getConstThree()));
+#{ test04.pins: Control flow structures. }#
+
+fun main(): void = ({
+    x = 1;
+    y = 2;
+    z = 3;
+
+    if (x < 5 & x < y) then
+        putChar('J');
+    else
+        putChar('R');
+    end;
+
+    if (x > z | y < z) then
+        putChar('A');
+    else
+        putChar('U');
+    end;
+
+    if (x > y & x > z | y < z) then
+        putChar('V');
+    else
+        putChar('S');
+    end;
+
+    if (x >= y & x >= z & y >= z) then
+        putChar('T');
+    else
+        putChar('A');
+    end;
+
+    while (x < z | y < z) do
+        putChar('!');
+        x = x + 1;
+        y = y + 1;
+    end;
+}
+where
+    var x: int;
+    var y: int;
+    var z: int;
+);
+
+
+#{ Utilities }#
+
+fun endl(): char = (10 : char);
+
+
+#{ Forward declarations: }#
 
 fun putInt(i: int): void = none;
+fun getInt(): int = 0;
 
-fun add(a: int, b: int): int = a + b;
-
-fun getConstOne(): int = 1;
-
-fun getConstThree(): int = 3;
+fun putChar(c: char): void = none;
+fun getChar(): char = 'a';

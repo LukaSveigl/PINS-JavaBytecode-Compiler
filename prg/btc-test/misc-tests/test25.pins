@@ -1,0 +1,13 @@
+fun main(): void = ({
+    x = 1;
+    f();
+
+    x = 2;
+    f();
+}
+where
+    var x: int;
+    fun f(): void = putInt(x);
+);
+
+fun putInt(i: int): void = none;

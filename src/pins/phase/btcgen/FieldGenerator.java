@@ -23,7 +23,7 @@ public class FieldGenerator implements AstVisitor<BtcFIELD, BtcCLASS> {
         if (SemAn.describesType.get(varDecl.type) instanceof SemInt) {
             type = BtcFIELD.Type.LONG;
         } else if (SemAn.describesType.get(varDecl.type) instanceof SemChar) {
-            type = BtcFIELD.Type.INT;
+            type = BtcFIELD.Type.CHAR;
         } else if (SemAn.describesType.get(varDecl.type) instanceof SemArr) {
             type = BtcFIELD.Type.ARRAY;
             SemArr arrType = (SemArr) SemAn.describesType.get(varDecl.type);
@@ -31,7 +31,7 @@ public class FieldGenerator implements AstVisitor<BtcFIELD, BtcCLASS> {
                 subTypes.add(BtcFIELD.Type.LONG);
                 //subType = BtcFIELD.Type.LONG;
             } else if (arrType.elemType instanceof SemChar) {
-                subTypes.add(BtcFIELD.Type.INT);
+                subTypes.add(BtcFIELD.Type.CHAR);
                 //subType = BtcFIELD.Type.INT;
             } else if (arrType.elemType instanceof SemPtr) {
                 subTypes.add(BtcFIELD.Type.OBJECT);
@@ -48,7 +48,7 @@ public class FieldGenerator implements AstVisitor<BtcFIELD, BtcCLASS> {
                         subTypes.add(BtcFIELD.Type.LONG);
                         break;
                     } else if (elemType instanceof SemChar) {
-                        subTypes.add(BtcFIELD.Type.INT);
+                        subTypes.add(BtcFIELD.Type.CHAR);
                         break;
                     } else if (elemType instanceof SemPtr) {
                         // TODO: Implement this.
@@ -61,22 +61,18 @@ public class FieldGenerator implements AstVisitor<BtcFIELD, BtcCLASS> {
                 throw new Report.InternalError();
             }
         } else if (SemAn.describesType.get(varDecl.type) instanceof SemPtr) {
-            type = BtcFIELD.Type.OBJECT;
+            // TODO: Implement this.
+            type = BtcFIELD.Type.ARRAY;
             SemPtr ptrType = (SemPtr) SemAn.describesType.get(varDecl.type);
             if (ptrType.baseType instanceof SemInt) {
                 subTypes.add(BtcFIELD.Type.LONG);
-                //subType = BtcFIELD.Type.LONG;
             } else if (ptrType.baseType instanceof SemChar) {
                 subTypes.add(BtcFIELD.Type.INT);
-                //subType = BtcFIELD.Type.INT;
             } else if (ptrType.baseType instanceof SemPtr) {
                 subTypes.add(BtcFIELD.Type.OBJECT);
-                //subType = BtcFIELD.Type.OBJECT;
             } else if (ptrType.baseType instanceof SemArr) {
                 subTypes.add(BtcFIELD.Type.ARRAY);
-                //subType = BtcFIELD.Type.ARRAY;
-            }
-            else {
+            } else {
                 throw new Report.InternalError();
             }
         } else {

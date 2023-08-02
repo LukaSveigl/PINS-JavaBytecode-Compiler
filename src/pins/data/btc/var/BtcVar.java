@@ -8,7 +8,7 @@ import pins.common.logger.Loggable;
 public abstract class BtcVar implements Loggable {
 
     public enum Type {
-        INT, FLOAT, LONG, DOUBLE, BOOL, STRING, ARRAY, OBJECT, VOID
+        INT, FLOAT, LONG, DOUBLE, BOOL, STRING, ARRAY, OBJECT, VOID, CHAR
     }
 
     /** The type of the variable. */

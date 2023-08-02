@@ -1,0 +1,9 @@
+fun main(): void = putInt(add(getConstOne(), getConstThree()));
+
+fun putInt(i: int): void = none;
+
+fun add(a: int, b: int): int = a + b;
+
+fun getConstOne(): int = 1;
+
+fun getConstThree(): int = 3;

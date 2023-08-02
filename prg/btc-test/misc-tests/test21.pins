@@ -1,0 +1,18 @@
+fun main(): void = ({
+    x = 4;
+    y = 1;
+    z = 2;
+
+    if x == 0 & x < y | y > z then
+        putChar('a');
+    else
+        putChar('b');
+    end;
+}
+where
+    var x: int;
+    var y: int;
+    var z: int;
+);
+
+fun putChar(c: char): void = none;

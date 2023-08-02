@@ -1,24 +1,39 @@
-fun main(): void = {
-    x = 5;
+#{ test06.pins: Advanced pointers. }#
 
-    while x != 0 do
-        putInt(x);
+fun main(): void = ({
+    x = new 10;
+    i = 1;
+
+    (((x : int) + 0) : ^int)^ = 2;
+
+    while i < 10 do
+        (((x : int) + i) : ^int)^ = 2 * (((x : int) + (i - 1)) : ^int)^;
+        i = i + 1;
+    end;
+
+    i = 0;
+
+    while i < 10 do
+        putInt((((x : int) + i) : ^int)^);
         putChar(endl());
-        x = x - 1;
+        i = i + 1;
     end;
+}
+where
+    var i: int;
+    var x: ^int;
+);
 
-    y = 'a';
 
-    if y == 'a' then
-        putChar('y');
-    else
-        putChar('n');
-    end;
-};
-
-var x: int;
-var y: char;
+#{ Utilities }#
 
 fun endl(): char = (10 : char);
+
+
+#{ Forward declarations: }#
+
 fun putInt(i: int): void = none;
+fun getInt(): int = 0;
+
 fun putChar(c: char): void = none;
+fun getChar(): char = 'a';

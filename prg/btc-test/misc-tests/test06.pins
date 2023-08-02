@@ -1,0 +1,24 @@
+fun main(): void = {
+    x = 5;
+
+    while x != 0 do
+        putInt(x);
+        putChar(endl());
+        x = x - 1;
+    end;
+
+    y = 'a';
+
+    if y == 'a' then
+        putChar('y');
+    else
+        putChar('n');
+    end;
+};
+
+var x: int;
+var y: char;
+
+fun endl(): char = (10 : char);
+fun putInt(i: int): void = none;
+fun putChar(c: char): void = none;

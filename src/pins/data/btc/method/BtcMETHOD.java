@@ -39,6 +39,7 @@ public class BtcMETHOD implements Loggable {
     /** The method local variables. */
     private final Vector<BtcLOCAL> locals = new Vector<BtcLOCAL>();
 
+    /** The method accesses to local variables. */
     private final HashMap<MemRelAccess, BtcLOCAL> accessesToLocals = new HashMap<MemRelAccess, BtcLOCAL>();
 
     /** The method instructions. */
@@ -137,8 +138,23 @@ public class BtcMETHOD implements Loggable {
         return locals.get(index);
     }
 
+    /**
+     * Returns the local variable with the given access.
+     *
+     * @param access The access.
+     * @return The local variable.
+     */
     public BtcLOCAL getLocal(MemRelAccess access) {
         return accessesToLocals.get(access);
+    }
+
+    /**
+     * Returns the method accesses and locals mapping.
+     *
+     * @return the method accesses and locals mapping.
+     */
+    public HashMap<MemRelAccess, BtcLOCAL> getAccessesToLocals() {
+        return accessesToLocals;
     }
 
     /**
@@ -150,6 +166,11 @@ public class BtcMETHOD implements Loggable {
         return locals;
     }
 
+    /**
+     * Returns the method local variable types.
+     *
+     * @return The method local variable types.
+     */
     public Vector<Type> locTypes() {
         return locs;
     }

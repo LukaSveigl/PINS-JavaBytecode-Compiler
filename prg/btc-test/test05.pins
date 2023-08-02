@@ -1,34 +1,53 @@
+#{ test05.pins: Simple pointers. }#
+
 fun main(): void = ({
-    x = 7;
-
-    y = 10;
-
-    putInt(fib(x));
-    putChar(endl());
-    putInt(fib(y));
+    fill(^field, 5, 2);
+    print(^field, 5);
 }
 where
-    var x: int;
+    var field: [5]int;
 );
 
-var y: int;
+fun fill(field: ^[5]int, size: int, modifier: int): void = ({
+    i = 0;
 
-fun fib(n: int): int = ({
-    if n <= 1 then
-        ret = n;
-    else
-        ret = fib(n - 1) + fib(n - 2);
+    while (i < size) do
+        field^[i] = i * modifier;
+        i = i + 1;
     end;
-
-    ret;
 }
 where
-    var ret: int;
+    var i: int;
+);
+
+fun print(field: ^[5]int, size: int): void = ({
+    i = 0;
+
+    while (i < size) do
+        putInt(field^[i]);
+        if (i == size - 1) then
+            putChar(endl());
+        else
+            putChar(',');
+            putChar(' ');
+        end;
+        i = i + 1;
+    end;
+}
+where
+    var i: int;
 );
 
 
-#{ Forward declarations }#
+#{ Utilities }#
 
-fun endl() : char = (10 : char);
+fun endl(): char = (10 : char);
+
+
+#{ Forward declarations: }#
+
 fun putInt(i: int): void = none;
+fun getInt(): int = 0;
+
 fun putChar(c: char): void = none;
+fun getChar(): char = 'a';
