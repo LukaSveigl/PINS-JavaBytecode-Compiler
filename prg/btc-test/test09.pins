@@ -1,0 +1,41 @@
+#{ test09.pins: Character pointers. }#
+
+fun main(): void = ({
+    x = new 10;
+    i = 1;
+
+    (((x : int) + 0) : ^char)^ = 'a';
+
+    while i < 10 do
+        c = (((x : int) + (i - 1)) : ^char)^;
+        (((x : int) + i) : ^char)^ = (1 + (c : int) : char);
+        i = i + 1;
+    end;
+
+    i = 0;
+
+    while i < 10 do
+        putChar((((x : int) + i) : ^char)^);
+        putChar(endl());
+        i = i + 1;
+    end;
+}
+where
+    var c: char;
+    var i: int;
+    var x: ^char;
+);
+
+
+#{ Utilities }#
+
+fun endl(): char = (10 : char);
+
+
+#{ Forward declarations: }#
+
+fun putInt(i: int): void = none;
+fun getInt(): int = 0;
+
+fun putChar(c: char): void = none;
+fun getChar(): char = 'a';

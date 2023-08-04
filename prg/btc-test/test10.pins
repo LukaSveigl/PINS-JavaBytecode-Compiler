@@ -1,0 +1,44 @@
+#{ test10.pins: Referencing/de-referencing. }#
+
+fun main(): void = ({
+    bas1 = 3;
+    ptr1 = ^bas1;
+
+    putInt(bas1);
+    putChar(endl());
+    putInt(ptr1^);
+
+    bas1 = 7;
+
+    putChar(endl());
+
+    putInt(bas1);
+    putChar(endl());
+    putInt(ptr1^);
+
+    ptr1^ = 9;
+
+    putChar(endl());
+
+    putInt(bas1);
+    putChar(endl());
+    putInt(ptr1^);
+}
+where
+    var bas1 : int;
+    var ptr1 : ^int;
+);
+
+
+#{ Utilities }#
+
+fun endl(): char = (10 : char);
+
+
+#{ Forward declarations: }#
+
+fun putInt(i: int): void = none;
+fun getInt(): int = 0;
+
+fun putChar(c: char): void = none;
+fun getChar(): char = 'a';

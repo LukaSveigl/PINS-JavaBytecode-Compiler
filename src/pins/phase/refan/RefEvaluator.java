@@ -123,7 +123,17 @@ public class RefEvaluator extends AstFullVisitor<Object, RefEvaluator.RefDepth> 
             return null;
         }
 
-        RefAn.referenceCandidates.put(access, refDepth.depth);
+        if (RefAn.referenceCandidates.containsKey(access)) {
+            if (RefAn.referenceCandidates.get(access) < refDepth.depth) {
+                RefAn.referenceCandidates.put(access, refDepth.depth);
+            }
+        } else {
+            RefAn.referenceCandidates.put(access, refDepth.depth);
+        }
+
+        //RefAn.referenceCandidates.put(access, refDepth.depth);
+
+        //System.out.println("REFAN: " + access + " " + refDepth.depth);
 
         // As the name expression is the last expression in the chain, reset the reference depth.
         refDepth = new RefDepth();
