@@ -67,40 +67,6 @@ public class RefEvaluator extends AstFullVisitor<Object, RefEvaluator.RefDepth> 
         return null;
     }
 
-    /**
-     * Visit method for parameter declarations.
-     *
-     * @param parDecl The parameter declaration.
-     * @param refDepth The current reference depth.
-     * @return The result of the traversal.
-     */
-    @Override
-    public Object visit(AstParDecl parDecl, RefDepth refDepth) {
-
-        MemAccess access = Memory.parAccesses.get(parDecl);
-
-        //RefAn.referenceCandidates.put(access, 0);
-
-        return null;
-    }
-
-    /**
-     * Visit method for variable declarations.
-     *
-     * @param varDecl The variable declaration.
-     * @param refDepth The current reference depth.
-     * @return The result of the traversal.
-     */
-    @Override
-    public Object visit(AstVarDecl varDecl, RefDepth refDepth) {
-
-        MemAccess access = Memory.varAccesses.get(varDecl);
-
-        // RefAn.referenceCandidates.put(access, 0);
-
-        return null;
-    }
-
     // EXPRESSIONS
 
     /**
@@ -131,11 +97,6 @@ public class RefEvaluator extends AstFullVisitor<Object, RefEvaluator.RefDepth> 
             RefAn.referenceCandidates.put(access, refDepth.depth);
         }
 
-        //RefAn.referenceCandidates.put(access, refDepth.depth);
-
-        //System.out.println("REFAN: " + access + " " + refDepth.depth);
-
-        // As the name expression is the last expression in the chain, reset the reference depth.
         refDepth = new RefDepth();
 
         // If the name expression is not a global variable, check if it is a closure candidate.
