@@ -31,6 +31,13 @@ import java.util.Map;
  */
 public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
 
+    /**
+     * Visits the ASTs in the source file and generates the corresponding bytecode methods.
+     *
+     * @param asts      The ASTs in the source file.
+     * @param btcMethod The current bytecode method.
+     * @return The result of the visit.
+     */
     @Override
     public BtcInstr visit(ASTs<?> asts, BtcMETHOD btcMethod) {
         for (AST ast : asts.asts()) {
@@ -41,6 +48,17 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
 
     // DECLARATIONS
 
+    /**
+     * Visits the function declaration and generates the corresponding bytecode method. It also handles the difference
+     * between top level functions and nested functions, by performing lambda lifting on the latter.
+     * In case a top level function is the main entry point of the program, it also initializes the class fields that
+     * are of the array or pointer type.
+     *
+     * @param funDecl   The function declaration to visit.
+     * @param btcMethod The current bytecode method.
+     * @return null.
+     * @throws Report.InternalError If the type of the function is not one of the supported types.
+     */
     @Override
     public BtcInstr visit(AstFunDecl funDecl, BtcMETHOD btcMethod) {
         BtcMETHOD.Type type;
@@ -134,9 +152,17 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
         return null;
     }
 
+    /**
+     * Visits the parameter declaration and adds it to the method as a local variable. In case the reference analysis
+     * has identified the parameter as either a reference or closure candidate, the parameter is added as an array.
+     *
+     * @param parDecl   The parameter declaration.
+     * @param btcMethod The method to which the parameter is added.
+     * @return null
+     * @throws Report.InternalError If the type of the parameter is invalid as per the PINS'22 specifications.
+     */
     @Override
     public BtcInstr visit(AstParDecl parDecl, BtcMETHOD btcMethod) {
-        // TODO: Implement pointers.
         BtcLOCAL.Type type;
 
         if (RefAn.closureCandidates.contains(Memory.parAccesses.get(parDecl))) {
@@ -175,9 +201,18 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
         return null;
     }
 
+    /**
+     * Visits the variable declaration and adds it to the method as a local variable. In case the reference analysis
+     * has identified the variable as either a reference or closure candidate, the variable is added as an array.
+     *
+     * @param varDecl   The variable declaration.
+     * @param btcMethod The method to which the variable is added.
+     * @return null
+     * @throws Report.InternalError If the type of the variable is invalid as per the PINS'22 specifications.
+     */
     @Override
     public BtcInstr visit(AstVarDecl varDecl, BtcMETHOD btcMethod) {
-        // TODO: Implement pointers.
+        // TODO: REFACTOR THIS.
         BtcLOCAL.Type type;
 
         if (SemAn.describesType.get(varDecl.type) instanceof SemInt) {
@@ -394,36 +429,23 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
 
     // STATEMENTS
 
+    /**
+     * Visits an if statement and generates the appropriate instruction sequence based on the condition and if the
+     * statement contains an else block.
+     *
+     * @param ifStmt    The if statement to visit.
+     * @param btcMethod The method the if statement belongs to.
+     * @return The conditional jump instruction of the if statement.
+     * @throws Report.InternalError If the condition of the if statement is not a binary expression.
+     */
     @Override
     public BtcInstr visit(AstIfStmt ifStmt, BtcMETHOD btcMethod) {
         BtcCJUMP.Oper oper = null;
-        if (ifStmt.condExpr instanceof AstBinExpr) {
-            // TODO: Code cleanup. This is a mess.
-            AstBinExpr binExpr = (AstBinExpr) ifStmt.condExpr;
 
+        if (ifStmt.condExpr instanceof AstBinExpr binExpr) {
             if (binExpr.oper == AstBinExpr.Oper.AND || binExpr.oper == AstBinExpr.Oper.OR) {
-                ifStmt.condExpr.accept(this, btcMethod);
-
-                if (ifStmt.elseBodyStmt == null) {
-                    BtcCJUMP btcCjump = new BtcCJUMP(btcMethod.instrCount(), BtcCJUMP.Oper.EQ);
-                    btcMethod.addInstr(btcCjump);
-                    ifStmt.thenBodyStmt.accept(this, btcMethod);
-                    btcCjump.setTarget(btcMethod.instrCount());
-                    return btcCjump;
-                } else {
-                    BtcCJUMP btcCjump = new BtcCJUMP(btcMethod.instrCount(), BtcCJUMP.Oper.EQ);
-                    btcMethod.addInstr(btcCjump);
-                    ifStmt.thenBodyStmt.accept(this, btcMethod);
-                    BtcGOTO btcJump = new BtcGOTO(btcMethod.instrCount());
-                    btcMethod.addInstr(btcJump);
-                    btcCjump.setTarget(btcMethod.instrCount());
-                    ifStmt.elseBodyStmt.accept(this, btcMethod);
-                    btcJump.setTarget(btcMethod.instrCount());
-                    return btcJump;
-                }
+                oper = BtcCJUMP.Oper.EQ;
             } else {
-                ifStmt.condExpr.accept(this, btcMethod);
-
                 switch (binExpr.oper) {
                     case EQU -> oper = BtcCJUMP.Oper.NE;
                     case NEQ -> oper = BtcCJUMP.Oper.EQ;
@@ -432,55 +454,50 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
                     case GTH -> oper = BtcCJUMP.Oper.LE;
                     case GEQ -> oper = BtcCJUMP.Oper.LT;
                 }
-
-                if (ifStmt.elseBodyStmt == null) {
-                    BtcCJUMP btcCjump = new BtcCJUMP(btcMethod.instrCount(), oper);
-                    btcMethod.addInstr(btcCjump);
-                    ifStmt.thenBodyStmt.accept(this, btcMethod);
-                    btcCjump.setTarget(btcMethod.instrCount());
-                    return btcCjump;
-                } else {
-                    BtcCJUMP btcCjump = new BtcCJUMP(btcMethod.instrCount(), oper);
-                    btcMethod.addInstr(btcCjump);
-                    ifStmt.thenBodyStmt.accept(this, btcMethod);
-                    BtcGOTO btcJump = new BtcGOTO(btcMethod.instrCount());
-                    btcMethod.addInstr(btcJump);
-                    btcCjump.setTarget(btcMethod.instrCount());
-                    ifStmt.elseBodyStmt.accept(this, btcMethod);
-                    btcJump.setTarget(btcMethod.instrCount());
-                    return btcJump;
-                }
             }
+        } else {
+            throw new Report.InternalError();
         }
 
-        return null;
+        ifStmt.condExpr.accept(this, btcMethod);
+
+        assert oper != null;
+
+        if (ifStmt.elseBodyStmt == null) {
+            BtcCJUMP btcCjump = new BtcCJUMP(btcMethod.instrCount(), oper);
+            btcMethod.addInstr(btcCjump);
+            ifStmt.thenBodyStmt.accept(this, btcMethod);
+            btcCjump.setTarget(btcMethod.instrCount());
+            return btcCjump;
+        } else {
+            BtcCJUMP btcCjump = new BtcCJUMP(btcMethod.instrCount(), oper);
+            btcMethod.addInstr(btcCjump);
+            ifStmt.thenBodyStmt.accept(this, btcMethod);
+            BtcGOTO btcJump = new BtcGOTO(btcMethod.instrCount());
+            btcMethod.addInstr(btcJump);
+            btcCjump.setTarget(btcMethod.instrCount());
+            ifStmt.elseBodyStmt.accept(this, btcMethod);
+            btcJump.setTarget(btcMethod.instrCount());
+            return btcJump;
+        }
     }
 
+    /**
+     * Visits the while statement and generates the appropriate instruction sequence.
+     *
+     * @param whileStmt The while statement to visit.
+     * @param btcMethod The method to which the while statement belongs.
+     * @return The conditional instruction of the while statement.
+     * @throws Report.InternalError If the condition of the while statement is not a binary expression.
+     */
     @Override
     public BtcInstr visit(AstWhileStmt whileStmt, BtcMETHOD btcMethod) {
         BtcCJUMP.Oper oper = null;
-        if (whileStmt.condExpr instanceof AstBinExpr) {
-            // TODO: Code cleanup. This is a mess.
-            AstBinExpr binExpr = (AstBinExpr) whileStmt.condExpr;
 
+        // Generate the appropriate operator for the condition.
+        if (whileStmt.condExpr instanceof AstBinExpr binExpr) {
             if (binExpr.oper == AstBinExpr.Oper.AND || binExpr.oper == AstBinExpr.Oper.OR) {
-                // In case the right side of the binary expression is another binary expression, it will be the 'AND' or 'OR'
-                // expression. The left side of the tree can never be an 'AND' or 'OR' expression.
-
-                int start = btcMethod.instrCount();
-                whileStmt.condExpr.accept(this, btcMethod);
-                BtcCJUMP btcCJUMP = new BtcCJUMP(btcMethod.instrCount(), BtcCJUMP.Oper.EQ);
-                btcMethod.addInstr(btcCJUMP);
-
-                whileStmt.bodyStmt.accept(this, btcMethod);
-
-                BtcGOTO btcGOTO = new BtcGOTO(btcMethod.instrCount());
-                btcGOTO.setTarget(start);
-                btcMethod.addInstr(btcGOTO);
-
-                btcCJUMP.setTarget(btcMethod.instrCount());
-
-                return btcCJUMP;
+                oper = BtcCJUMP.Oper.EQ;
             } else {
                 switch (binExpr.oper) {
                     case EQU -> oper = BtcCJUMP.Oper.NE;
@@ -491,7 +508,11 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
                     case GEQ -> oper = BtcCJUMP.Oper.LT;
                 }
             }
+        } else {
+            throw new Report.InternalError();
         }
+
+        assert oper != null;
 
         int start = btcMethod.instrCount();
         whileStmt.condExpr.accept(this, btcMethod);
@@ -509,11 +530,19 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
         return btcCJUMP;
     }
 
+    /**
+     * Visits the expression statement and accepts the subexpression.
+     *
+     * @param exprStmt  The expression statement to visit.
+     * @param btcMethod The method to which the expression statement belongs.
+     * @return The instruction that was generated.
+     */
     @Override
     public BtcInstr visit(AstExprStmt exprStmt, BtcMETHOD btcMethod) {
         return exprStmt.expr.accept(this, btcMethod);
     }
 
+    // TODO: ADD JAVADOC AND REFACTOR.
     @Override
     public BtcInstr visit(AstAssignStmt assignStmt, BtcMETHOD btcMethod) {
         // TODO: Code cleanup. This is a mess.
@@ -967,6 +996,14 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
 
     // EXPRESSIONS
 
+    /**
+     * Visits a constant expression and generates the appropriate LDC or CONST instruction based on the type and value.
+     *
+     * @param constExpr The constant expression to visit.
+     * @param btcMethod The method to which the constant expression belongs to.
+     * @return The generated instruction.
+     * @throws Report.InternalError If the constant expression is of an invalid type or value.
+     */
     @Override
     public BtcInstr visit(AstConstExpr constExpr, BtcMETHOD btcMethod) {
         BtcInstr btcInstr;
@@ -998,8 +1035,18 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
         return btcInstr;
     }
 
+    /**
+     * Visits a name expression and generates the appropriate load instructions based on the type of the expression, if
+     * the expression is a variable or parameter, or a field access.
+     *
+     * @param nameExpr  The name expression to visit.
+     * @param btcMethod The method to which the name expression belongs to.
+     * @return The generated instruction.
+     * @throws Report.InternalError If the name expression is of an invalid type.
+     */
     @Override
     public BtcInstr visit(AstNameExpr nameExpr, BtcMETHOD btcMethod) {
+        // TODO: REFACTOR THIS.
         AstDecl decl = SemAn.declaredAt.get(nameExpr);
         MemAccess memAccess;
         if (decl instanceof AstVarDecl) {
@@ -1058,8 +1105,18 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
         return btcInstr;
     }
 
+    /**
+     * Visits a binary expression and generates the appropriate instruction sequence based on the type and operator of
+     * the expression.
+     *
+     * @param binExpr   The binary expression to visit.
+     * @param btcMethod The method to which the binary expression belongs to.
+     * @return The generated instruction.
+     * @throws Report.InternalError If the binary expression is of an invalid type or operator.
+     */
     @Override
     public BtcInstr visit(AstBinExpr binExpr, BtcMETHOD btcMethod) {
+        // TODO: REFACTOR THIS.
         if (binExpr.oper != AstBinExpr.Oper.ARR && binExpr.oper != AstBinExpr.Oper.AND && binExpr.oper != AstBinExpr.Oper.OR) {
             binExpr.fstSubExpr.accept(this, btcMethod);
             binExpr.sndSubExpr.accept(this, btcMethod);
@@ -1318,6 +1375,15 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
         }
     }
 
+    /**
+     * Visits a prefix expression and generates the appropriate instruction sequence based on the type and operator of
+     * the expression.
+     *
+     * @param preExpr   The prefix expression to visit.
+     * @param btcMethod The method to generate the instruction sequence for.
+     * @return The last instruction generated.
+     * @throws Report.InternalError If the expression is of an invalid type/operator combination.
+     */
     @Override
     public BtcInstr visit(AstPreExpr preExpr, BtcMETHOD btcMethod) {
         preExpr.subExpr.accept(this, btcMethod);
@@ -1389,8 +1455,18 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
         return btcInstr;
     }
 
+    /**
+     * Visits a postfix expression and generates the appropriate instruction sequence based on the type and operator of
+     * the expression.
+     *
+     * @param pstExpr   The postfix expression to visit.
+     * @param btcMethod The method to which the postfix expression belongs to.
+     * @return The last instruction generated.
+     * @throws Report.InternalError If the expression is of an invalid type/operator combination.
+     */
     @Override
     public BtcInstr visit(AstPstExpr pstExpr, BtcMETHOD btcMethod) {
+        // TODO: REFACTOR THIS.
         //BtcInstr btcInstr = pstExpr.subExpr.accept(this, btcMethod);
         // TODO: Implement de-referencing.
 
@@ -1497,12 +1573,20 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
         }
 
         return null;
-
-        //return btcInstr;
     }
 
+    /**
+     * Visits a call expression and generates the appropriate instruction sequence. It also handles invocation of the
+     * builtin functions such as 'putInt' and 'putChar'.
+     *
+     * @param callExpr  The call expression to visit.
+     * @param btcMethod The method to which the call expression belongs.
+     * @return The last instruction generated.
+     * @throws Report.InternalError In case of a wrong type when handling local passthrough in case of lambda lifting.
+     */
     @Override
     public BtcInstr visit(AstCallExpr callExpr, BtcMETHOD btcMethod) {
+        // TODO: REFACTOR THIS.
         BtcINVOKE.Type type;
 
         if (callExpr.name.equals("putInt") || callExpr.name.equals("putChar")) {
@@ -1592,6 +1676,14 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
         return btcInstr;
     }
 
+    /**
+     * Visits a cast expression.
+     *
+     * @param castExpr  The cast expression to visit.
+     * @param btcMethod The method to which the cast expression belongs.
+     * @return The cast instruction.
+     * @throws Report.InternalError If the cast expression is of an invalid type.
+     */
     @Override
     public BtcInstr visit(AstCastExpr castExpr, BtcMETHOD btcMethod) {
         BtcCAST.Type from;
@@ -1625,6 +1717,15 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
         return btcCast;
     }
 
+    /**
+     * Visits a where expression and accepts all declarations and the subexpression of the where expression. In case of
+     * declarations, the variable declarations are visited first, followed by the function declarations. The subexpression
+     * is visited last.
+     *
+     * @param whereExpr The where expression to visit.
+     * @param btcMethod The method to which the where expression belongs.
+     * @return The instruction generated by the subexpression.
+     */
     @Override
     public BtcInstr visit(AstWhereExpr whereExpr, BtcMETHOD btcMethod) {
         // First resolve all variable declarations.
@@ -1641,6 +1742,15 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
         return whereExpr.subExpr.accept(this, btcMethod);
     }
 
+    /**
+     * Visits a statement expression and accepts all statements in the statement expression. It also generates a return
+     * instruction, but as of the time of writing, this return instruction is never used.
+     *
+     * @param stmtExpr  The statement expression to visit.
+     * @param btcMethod The method to which the statement expression belongs.
+     * @return A return instruction.
+     * @throws Report.InternalError If the last statement in the statement expression is of an invalid type.
+     */
     @Override
     public BtcInstr visit(AstStmtExpr stmtExpr, BtcMETHOD btcMethod) {
         stmtExpr.stmts.asts().forEach(stmt -> stmt.accept(this, btcMethod));
@@ -1648,15 +1758,16 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
 
         if (lastStmt instanceof AstExprStmt) {
             BtcRETURN.Type type;
-            if (SemAn.exprOfType.get(((AstExprStmt) lastStmt).expr) instanceof SemInt) {
+            SemType semType = SemAn.exprOfType.get(((AstExprStmt) lastStmt).expr);
+            if (semType instanceof SemInt) {
                 type = BtcRETURN.Type.LONG;
-            } else if (SemAn.exprOfType.get(((AstExprStmt) lastStmt).expr) instanceof SemChar) {
+            } else if (semType instanceof SemChar) {
                 type = BtcRETURN.Type.INT;
-            } else if (SemAn.exprOfType.get(((AstExprStmt) lastStmt).expr) instanceof SemArr) {
+            } else if (semType instanceof SemArr) {
                 type = BtcRETURN.Type.REFERENCE;
-            } else if (SemAn.exprOfType.get(((AstExprStmt) lastStmt).expr) instanceof SemPtr) {
+            } else if (semType instanceof SemPtr) {
                 type = BtcRETURN.Type.REFERENCE;
-            } else if (SemAn.exprOfType.get(((AstExprStmt) lastStmt).expr) instanceof SemVoid) {
+            } else if (semType instanceof SemVoid) {
                 type = BtcRETURN.Type.VOID;
             } else {
                 throw new Report.InternalError();
