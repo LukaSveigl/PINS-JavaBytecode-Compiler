@@ -167,13 +167,8 @@ public class Compiler {
 				// Compilation of the AST to JVM code.
 				if (cmdLine.get("--comp-method").equals("compile")) {
 					try (RefAn refan = new RefAn(); BtcGen btcgen = new BtcGen(); BtcEmt btcemt = new BtcEmt()) {
-
 						// Reference analysis.
 						ast.accept(new RefEvaluator(), null);
-
-						for (Map.Entry<MemAccess, Integer> mapping : RefAn.referenceCandidates.entrySet()) {
-							System.out.println(mapping.getKey() + " " + mapping.getValue());
-						}
 
 						// Bytecode generation.
 						ast.accept(new ClassGenerator(cmdLine.get("--dst-file-name")), null);

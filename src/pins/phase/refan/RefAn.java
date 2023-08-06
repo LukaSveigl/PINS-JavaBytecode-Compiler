@@ -17,6 +17,9 @@ public class RefAn implements AutoCloseable {
     /** Variables that are accessed in closures. */
     public static final Vector<MemRelAccess> closureCandidates = new Vector<MemRelAccess>(0);
 
+    /**
+     * Constructs a new reference analysis phase.
+     */
     public RefAn() {
     }
 

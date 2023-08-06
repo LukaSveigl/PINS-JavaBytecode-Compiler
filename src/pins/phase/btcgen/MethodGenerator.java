@@ -609,9 +609,6 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
             AstPstExpr pstExpr = (AstPstExpr) assignStmt.fstSubExpr;
 
             if (pstExpr.subExpr instanceof AstNameExpr) {
-
-                System.out.println("Storing into pointer: " + pstExpr.subExpr.toString());
-
                 // Load reference to pointer.
 
                 AstNameExpr nameExpr = (AstNameExpr) pstExpr.subExpr;
@@ -675,17 +672,7 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
                 btcMethod.addInstr(btcInstr);
                 return btcInstr;
 
-            } else if (pstExpr.subExpr instanceof AstBinExpr) {
-
             } else if (pstExpr.subExpr instanceof AstPstExpr pstExpr1) {
-                /*pstExpr1.subExpr.accept(this, btcMethod);
-
-                assignStmt.sndSubExpr.accept(this, btcMethod);
-
-                btcMethod.addInstr(new BtcCONST(btcMethod.instrCount(), 0, BtcCONST.Type.INT));
-                BtcInstr btcInstr = new BtcASTORE(btcMethod.instrCount(), BtcASTORE.Type.REF);
-                btcMethod.addInstr(btcInstr);*/
-
                 // Load reference to pointer.
 
                 pstExpr1.subExpr.accept(this, btcMethod);
@@ -706,14 +693,9 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
                 return btcInstr;
 
             } else {
-                if (pstExpr.subExpr instanceof AstCastExpr) {
-                    AstCastExpr castExpr = (AstCastExpr) pstExpr.subExpr;
-
-                    if (castExpr.subExpr instanceof AstBinExpr) {
-                        AstBinExpr binExpr = (AstBinExpr) castExpr.subExpr;
-
-                        if (binExpr.fstSubExpr instanceof AstCastExpr) {
-                            AstCastExpr castExpr2 = (AstCastExpr) binExpr.fstSubExpr;
+                if (pstExpr.subExpr instanceof AstCastExpr castExpr) {
+                    if (castExpr.subExpr instanceof AstBinExpr binExpr) {
+                        if (binExpr.fstSubExpr instanceof AstCastExpr castExpr2) {
 
                             // Accept the named expression -> variable. Should get the array reference.
                             //castExpr2.subExpr.accept(this, btcMethod);
@@ -762,8 +744,6 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
                             BtcInstr btcInstr = new BtcASTORE(btcMethod.instrCount(), type);
                             btcMethod.addInstr(btcInstr);
                             return btcInstr;
-                        } else {
-
                         }
                     } else {
                         throw new Report.InternalError();
@@ -832,27 +812,21 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
 
                 BtcLOCAL btcLocal = btcMethod.getLocal((MemRelAccess) access);
 
-                System.out.println(assignStmt.sndSubExpr);
-
                 switch (btcLocal.type) {
                     case LONG -> {
-                        System.out.println("LONG");
                         assignStmt.sndSubExpr.accept(this, btcMethod);
                         type = BtcSTORE.Type.LONG;
                     }
                     case CHAR -> {
-                        System.out.println("CHAR");
                         assignStmt.sndSubExpr.accept(this, btcMethod);
                         type = BtcSTORE.Type.INT;
                     }
                     case ARRAY, OBJECT -> {
-                        System.out.println("ARRAY OR OBJECT");
                         type = BtcSTORE.Type.ARR;
                     }
                     default -> throw new Report.InternalError();
                 }
 
-                //if (SemAn.exprOfType.get(assignStmt.fstSubExpr) instanceof SemPtr) {
                 if (btcLocal.type == BtcLOCAL.Type.OBJECT) {
 
                     // TODO: Fix. This is a hack when storing pointer to pointer.
@@ -1047,10 +1021,8 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
 
         switch (btcLocal.type) {
             case LONG -> type = BtcLOAD.Type.LONG;
-            case INT -> type = BtcLOAD.Type.INT;
-            case CHAR -> type = BtcLOAD.Type.INT;
-            case ARRAY -> type = BtcLOAD.Type.ARR;
-            case OBJECT -> type = BtcLOAD.Type.ARR;
+            case INT, CHAR -> type = BtcLOAD.Type.INT;
+            case ARRAY, OBJECT -> type = BtcLOAD.Type.ARR;
             default -> throw new Report.InternalError();
         }
 
@@ -1079,12 +1051,6 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
                     } else {
                         throw new Report.InternalError();
                     }
-                    /*if (type == BtcLOAD.Type.LONG) {
-                        btcMethod.addInstr(new BtcALOAD(btcMethod.instrCount(), BtcALOAD.Type.LONG));
-                    } else {
-                        btcMethod.addInstr(new BtcALOAD(btcMethod.instrCount(), BtcALOAD.Type.CHAR));
-                    }*/
-
                 }
             }
         }
@@ -1244,10 +1210,6 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
         if (binExpr.oper == AstBinExpr.Oper.ARR) {
             // TODO: Fix casts to depend on types.
 
-            System.out.println("HERERERE");
-            System.out.println(binExpr.fstSubExpr);
-            System.out.println(binExpr.sndSubExpr);
-
             AstExpr expr = binExpr.fstSubExpr;
 
             if (!(binExpr.fstSubExpr instanceof AstBinExpr)) {
@@ -1333,8 +1295,6 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
                 btcMethod.addInstr(btcInstr);
                 return btcInstr;
             } else {
-                System.out.println("LOADING LONG");
-                System.out.println(btcMethod.name);
                 BtcInstr btcInstr = new BtcALOAD(btcMethod.instrCount(), BtcALOAD.Type.LONG);
                 btcMethod.addInstr(btcInstr);
                 return btcInstr;
@@ -1483,19 +1443,9 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
             btcMethod.addInstr(btcInstr);
             return btcInstr;
 
-        } else if (pstExpr.subExpr instanceof AstBinExpr) {
-
         } else if (pstExpr.subExpr instanceof AstPstExpr pstExpr1) {
             pstExpr1.subExpr.accept(this, btcMethod);
 
-            /*if (pstExpr1.subExpr instanceof AstPstExpr pstExpr2) {
-                btcMethod.addInstr(new BtcCONST(btcMethod.instrCount(), 0, BtcCONST.Type.INT));
-                BtcInstr btcInstr = new BtcALOAD(btcMethod.instrCount(), BtcALOAD.Type.REF);
-                btcMethod.addInstr(btcInstr);
-                return btcInstr;
-            }*/
-
-            ///// MAYBE NOT NEEDED /////
             if (!(pstExpr1.subExpr instanceof AstPstExpr)) {
                 btcMethod.addInstr(new BtcCONST(btcMethod.instrCount(), 0, BtcCONST.Type.INT));
                 BtcInstr btcInstr = new BtcALOAD(btcMethod.instrCount(), BtcALOAD.Type.LONG);
@@ -1512,9 +1462,9 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
                         AstCastExpr castExpr2 = (AstCastExpr) binExpr.fstSubExpr;
 
                         // Accept the named expression -> variable. Should get the array reference.
-                        BtcLOAD load = (BtcLOAD) castExpr2.subExpr.accept(this, btcMethod);
+                        castExpr2.subExpr.accept(this, btcMethod);
                         // Accept the second expression -> index. Should get the index.
-                        BtcInstr tmp = binExpr.sndSubExpr.accept(this, btcMethod);
+                        binExpr.sndSubExpr.accept(this, btcMethod);
                         btcMethod.addInstr(new BtcCAST(btcMethod.instrCount(), BtcCAST.Type.LONG, BtcCAST.Type.INT));
 
                         BtcALOAD.Type type;
@@ -1537,8 +1487,6 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
 
                         btcMethod.addInstr(btcInstr);
                         return btcInstr;
-                    } else {
-
                     }
                 } else {
                     throw new Report.InternalError();
@@ -1713,9 +1661,7 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
             } else {
                 throw new Report.InternalError();
             }
-            BtcRETURN btcReturn = new BtcRETURN(btcMethod.instrCount(), type);
-            //btcMethod.addInstr(btcReturn);
-            return btcReturn;
+            return new BtcRETURN(btcMethod.instrCount(), type);
         }
         return null;
     }
