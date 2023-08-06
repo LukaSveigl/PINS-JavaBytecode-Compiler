@@ -89,7 +89,7 @@ public class CodeConverter {
 
     /** The Java bytecode representation of an OBJECT (Array or reference. In this case only array of LONG). */
     private static final String TYPE_OBJECT = "[J";
-    
+
     /** The Java bytecode representation of an ARRAY. */
     private static final String TYPE_ARRAY = "[";
 
@@ -296,6 +296,7 @@ public class CodeConverter {
      *
      * @param method The method to convert.
      * @return The converted type descriptor.
+     * @throws Report.InternalError in case the return type does not conform to the PINS'22 specifications.
      */
     private String convertTypeDescriptor(BtcMETHOD method) {
         StringBuilder typeDescriptorBuilder = new StringBuilder("(");
