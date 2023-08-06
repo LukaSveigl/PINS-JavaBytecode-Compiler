@@ -392,21 +392,26 @@ public class CodeConverter {
     private byte[] handleInstr(BtcLDC btcLDC) {
         ByteBuffer code;
 
+        final int WIDE_THRESHOLD = 0xff;
+        final int LDC_OPCODE = 0x12;
+        final int LDC_W_OPCODE = 0x13;
+        final int LDC2_W_OPCODE = 0x14;
+
         if (btcLDC.type == BtcLDC.Type.DEFAULT) {
             int index = currentClassFile.addConstPoolInfo(new EmtIntegerInfo((int) btcLDC.value));
-            if (index < 0xff) {
+            if (index < WIDE_THRESHOLD) {
                 code = ByteBuffer.allocate(2);
-                code.put((byte) 0x12);
+                code.put((byte) LDC_OPCODE);
                 code.put((byte) index);
             } else {
                 code = ByteBuffer.allocate(3);
-                code.put((byte) 0x13);
+                code.put((byte) LDC_W_OPCODE);
                 code.putShort((short) index);
             }
         } else {
             code = ByteBuffer.allocate(3);
             int index = currentClassFile.addConstPoolInfo(new EmtLongInfo(btcLDC.value));
-            code.put((byte) 0x14);
+            code.put((byte) LDC2_W_OPCODE);
             code.putShort((short) index);
         }
 
@@ -668,9 +673,11 @@ public class CodeConverter {
     private byte[] handleInstr(BtcGOTO btcGOTO) {
         ByteBuffer code = ByteBuffer.allocate(btcGOTO.size());
 
+        final int WIDE_THRESHOLD = 0xffff;
+
         code.put((byte) btcGOTO.opcode());
 
-        if (btcGOTO.target < 0xffff) {
+        if (btcGOTO.target < WIDE_THRESHOLD) {
             code.putShort((short) (btcGOTO.target - btcGOTO.index));
         } else {
             code.putInt(btcGOTO.target - btcGOTO.index);
