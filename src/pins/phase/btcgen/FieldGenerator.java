@@ -16,26 +16,31 @@ import java.util.Stack;
  */
 public class FieldGenerator implements AstVisitor<BtcFIELD, BtcCLASS> {
 
+    /**
+     * Visits the variable declaration and generates the corresponding bytecode field.
+     *
+     * @param varDecl  The variable declaration.
+     * @param btcClass The current bytecode class.
+     * @return The result of the visit.
+     */
     @Override
     public BtcFIELD visit(AstVarDecl varDecl, BtcCLASS btcClass) {
-        BtcFIELD.Type type = null;
+        BtcFIELD.Type type;
+        SemType semType = SemAn.describesType.get(varDecl.type);
         Stack<BtcFIELD.Type> subTypes = new Stack<>();
-        if (SemAn.describesType.get(varDecl.type) instanceof SemInt) {
+
+        if (semType instanceof SemInt) {
             type = BtcFIELD.Type.LONG;
-        } else if (SemAn.describesType.get(varDecl.type) instanceof SemChar) {
+        } else if (semType instanceof SemChar) {
             type = BtcFIELD.Type.CHAR;
-        } else if (SemAn.describesType.get(varDecl.type) instanceof SemArr) {
+        } else if (semType instanceof SemArr arrType) {
             type = BtcFIELD.Type.ARRAY;
-            SemArr arrType = (SemArr) SemAn.describesType.get(varDecl.type);
             if (arrType.elemType instanceof SemInt) {
                 subTypes.add(BtcFIELD.Type.LONG);
-                //subType = BtcFIELD.Type.LONG;
             } else if (arrType.elemType instanceof SemChar) {
                 subTypes.add(BtcFIELD.Type.CHAR);
-                //subType = BtcFIELD.Type.INT;
             } else if (arrType.elemType instanceof SemPtr) {
                 subTypes.add(BtcFIELD.Type.OBJECT);
-                //subType = BtcFIELD.Type.OBJECT;
             } else if (arrType.elemType instanceof SemArr) {
                 subTypes.add(BtcFIELD.Type.ARRAY);
 
@@ -56,14 +61,12 @@ public class FieldGenerator implements AstVisitor<BtcFIELD, BtcCLASS> {
                         throw new Report.InternalError();
                     }
                 } while (true);
-                //subType = BtcFIELD.Type.ARRAY;
             }else {
                 throw new Report.InternalError();
             }
-        } else if (SemAn.describesType.get(varDecl.type) instanceof SemPtr) {
+        } else if (semType instanceof SemPtr ptrType) {
             // TODO: Implement this.
             type = BtcFIELD.Type.ARRAY;
-            SemPtr ptrType = (SemPtr) SemAn.describesType.get(varDecl.type);
             if (ptrType.baseType instanceof SemInt) {
                 subTypes.add(BtcFIELD.Type.LONG);
             } else if (ptrType.baseType instanceof SemChar) {
