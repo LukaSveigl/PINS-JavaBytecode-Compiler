@@ -321,15 +321,15 @@ public class CodeConverter {
 
             // Generate the type descriptor for the return type.
             typeDescriptorBuilder.append(")").append(switch (method.ret) {
-                case INT -> "I";
-                case FLOAT -> "F";
-                case LONG -> "J";
-                case DOUBLE -> "D";
-                case BOOL -> "Z";
-                case STRING -> "Ljava/lang/String;";
+                case INT -> TYPE_INT;
+                case FLOAT -> TYPE_FLOAT;
+                case LONG -> TYPE_LONG;
+                case DOUBLE -> TYPE_DOUBLE;
+                case BOOL -> TYPE_BOOLEAN;
+                case STRING -> TYPE_STRING;
                 // As per the specification, the return type of function cannot be an array.
-                case OBJECT -> "[J";
-                case VOID -> "V";
+                case OBJECT -> TYPE_OBJECT;
+                case VOID -> TYPE_VOID;
                 default -> throw new Report.InternalError();
             });
         }
