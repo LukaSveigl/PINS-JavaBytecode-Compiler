@@ -1421,7 +1421,6 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
                 MemRelAccess localAccess = (MemRelAccess) Memory.varAccesses.get(varDecl);
 
                 BtcLOCAL btcLocal = btcMethod.getLocal(localAccess);
-
                 BtcSTORE btcStore = new BtcSTORE(btcMethod.instrCount(), btcLocal.index, BtcSTORE.Type.ARR);
 
                 btcMethod.addInstr(btcConst);
@@ -1429,8 +1428,6 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
                 return btcStore;
             }
             case PTR -> {
-                // TODO: Fix multiple references.
-
                 if (!(preExpr.subExpr instanceof AstNameExpr)) {
                     preExpr.subExpr.accept(this, btcMethod);
                 }
