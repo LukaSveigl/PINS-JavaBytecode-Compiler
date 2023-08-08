@@ -1,26 +1,26 @@
-#{ test10.pins: Referencing/de-referencing. }#
+#{ test14.pins: Multiple nested functions. }#
 
-fun main(): void = ({
-    bas1 = 3;
+fun main(): void = {
+    outerWrapper();
+};
 
-    ptr1 = ^bas1;
-    ptr2 = ptr1;
-
-    putInt(bas1);
-    putChar(endl());
-    putInt(ptr1^);
-    putChar(endl());
-    putInt(ptr2^);
-    putChar(endl());
+fun outerWrapper() : void = ({
+    x = 0;
+    innerWrapper();
 }
 where
-    var bas1 : int;
-    var ptr1 : ^int;
-    var ptr2 : ^int;
-    var ptr3 : ^^int;
-    var ptr4 : ^^int;
-);
+    var x: int;
 
+    fun innerWrapper() : void = ({
+        printer(x + 1);
+    }
+    where
+        fun printer(j: int) : void = {
+            putInt(j);
+            putInt(x);
+        };
+    );
+);
 
 #{ Utilities }#
 

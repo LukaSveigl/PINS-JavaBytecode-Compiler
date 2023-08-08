@@ -25,6 +25,7 @@ import pins.phase.refan.RefAn;
 import pins.phase.seman.SemAn;
 
 import java.util.Map;
+import java.util.Vector;
 
 /**
  * Bytecode method generator.
@@ -166,7 +167,7 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
         BtcLOCAL.Type type;
 
         if (RefAn.closureCandidates.contains(Memory.parAccesses.get(parDecl))) {
-            type = BtcLOCAL.Type.ARRAY;
+            type = BtcLOCAL.Type.OBJECT;
         } else {
             if (SemAn.describesType.get(parDecl.type) instanceof SemInt) {
                 type = BtcLOCAL.Type.LONG;

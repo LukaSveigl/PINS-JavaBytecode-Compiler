@@ -1,3 +1,5 @@
+#{ test08.pins: Multiple consecutive LDC and builtin instructions. }#
+
 fun main(): void = ({
     putChar('a');
     putChar('b');

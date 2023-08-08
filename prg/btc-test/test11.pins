@@ -1,4 +1,4 @@
-#{ test10.pins: Referencing/de-referencing. }#
+#{ test11.pins: Referencing/de-referencing with multiple depths. }#
 
 fun main(): void = ({
     bas1 = 3;
