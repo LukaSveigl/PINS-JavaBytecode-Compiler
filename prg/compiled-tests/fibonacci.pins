@@ -1,0 +1,17 @@
+fun main(): void = {
+    fib(30);
+    none;
+};
+
+fun fib(n: int): int = ({
+    if (n <= 1) then
+        ret = n;
+    else
+        ret = fib(n - 1) + fib(n - 2);
+    end;
+
+    ret;
+}
+where
+    var ret: int;
+);

@@ -1,0 +1,10 @@
+fun main(): void = ({
+    x = 2;
+    inner(1);
+}
+where
+    var x: int;
+    fun inner(y: int): void = putInt(x + y);
+);
+
+fun putInt(i: int): void = none;

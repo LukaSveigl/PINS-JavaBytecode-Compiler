@@ -1,0 +1,12 @@
+fun main() : void = ({
+    rand = randInt(5, 10);
+
+    putInt(rand);
+}
+where
+    var rand: int;
+);
+
+fun randInt(min: int, max: int) : int = 0;
+
+fun putInt(i: int) : void = none;

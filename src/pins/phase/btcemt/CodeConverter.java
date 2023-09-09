@@ -250,6 +250,8 @@ public class CodeConverter {
             return handleInstr((BtcNEWARRAY) instr);
         if (instr instanceof BtcMULTIANEWARRAY)
             return handleInstr((BtcMULTIANEWARRAY) instr);
+        if (instr instanceof BtcNEW)
+            return handleInstr((BtcNEW) instr);
 
         // Flow control instructions.
         if (instr instanceof BtcCJUMP)
@@ -644,6 +646,19 @@ public class CodeConverter {
 
         code.putShort((short) classInfoIndex);
         code.put((byte) btcMULTIANEWARRAY.dimensions);
+
+        return code.array();
+    }
+
+    private byte[] handleInstr(BtcNEW btcNEW) {
+        ByteBuffer code = ByteBuffer.allocate(btcNEW.size());
+
+        code.put((byte) btcNEW.opcode());
+
+        int classUtfIndex = currentClassFile.addConstPoolInfo(new EmtUTF8Info(btcNEW.className));
+        int classInfoIndex = currentClassFile.addConstPoolInfo(new EmtClassInfo(classUtfIndex));
+
+        code.putShort((short) classInfoIndex);
 
         return code.array();
     }

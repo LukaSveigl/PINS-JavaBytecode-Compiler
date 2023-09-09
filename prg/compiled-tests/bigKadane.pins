@@ -1,0 +1,49 @@
+fun main(): void = ({
+
+    i = 0;
+
+    while i < 100000 do
+        array[i] = randInt(-50, 50);
+        i = i + 1;
+    end;
+
+    result = kadane(^array);
+
+    putInt(result);
+}
+where
+    var result: int;
+    var array: [100000]int;
+    var i: int;
+);
+
+fun kadane(arr: ^[100000]int): int = ({
+    current_max = 0;
+    max_ending = 0;
+
+    i = 0;
+
+    while i < 100000 do
+        max_ending = max_ending + arr^[i];
+
+        if max_ending < 0 then
+            max_ending = 0;
+        end;
+
+        if current_max < max_ending then
+            current_max = max_ending;
+        end;
+
+        i = i + 1;
+    end;
+
+    current_max;
+}
+where
+    var i: int;
+    var current_max: int;
+    var max_ending: int;
+);
+
+fun putInt(i: int): void = none;
+fun randInt(min: int, max: int): int = 0;

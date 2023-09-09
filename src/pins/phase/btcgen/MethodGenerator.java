@@ -1096,6 +1096,8 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
                         btcMethod.addInstr(new BtcALOAD(btcMethod.instrCount(), BtcALOAD.Type.CHAR));
                     } else if (SemAn.exprOfType.get(nameExpr) instanceof SemPtr) {
                         btcMethod.addInstr(new BtcALOAD(btcMethod.instrCount(), BtcALOAD.Type.REF));
+                    } else if (SemAn.exprOfType.get(nameExpr) instanceof SemArr) {
+                        btcMethod.addInstr(new BtcALOAD(btcMethod.instrCount(), BtcALOAD.Type.REF));
                     } else {
                         throw new Report.InternalError();
                     }
@@ -1621,6 +1623,28 @@ public class MethodGenerator implements AstVisitor<BtcInstr, BtcMETHOD> {
                 btcMethod.addInstr(new BtcINVOKE(btcMethod.instrCount(), BtcINVOKE.Type.VIRTUAL, "java/lang/String.charAt:(I)C"));
             }
 
+            return null;
+        } else if (callExpr.name.equals("randInt")) {
+            btcMethod.addInstr(new BtcNEW(btcMethod.instrCount(), "java/util/Random"));
+            btcMethod.addInstr(new BtcDUP(btcMethod.instrCount(), BtcDUP.Kind.DUP));
+            btcMethod.addInstr(new BtcINVOKE(btcMethod.instrCount(), BtcINVOKE.Type.SPECIAL, "java/util/Random.<init>:()V"));
+
+            // Calculate max - min.
+            callExpr.args.asts().get(1).accept(this, btcMethod);
+            callExpr.args.asts().get(0).accept(this, btcMethod);
+            btcMethod.addInstr(new BtcARITHM(btcMethod.instrCount(), BtcARITHM.Oper.SUB, BtcARITHM.Type.LONG));
+
+            // Cast the long parameters to int so that the method can be invoked.
+            btcMethod.addInstr(new BtcCAST(btcMethod.instrCount(), BtcCAST.Type.LONG, BtcCAST.Type.INT));
+
+            btcMethod.addInstr(new BtcINVOKE(btcMethod.instrCount(), BtcINVOKE.Type.VIRTUAL, "java/util/Random.nextInt:(I)I"));
+
+            // Cast the result back to long.
+            btcMethod.addInstr(new BtcCAST(btcMethod.instrCount(), BtcCAST.Type.INT, BtcCAST.Type.LONG));
+
+            // Add min.
+            callExpr.args.asts().get(0).accept(this, btcMethod);
+            btcMethod.addInstr(new BtcARITHM(btcMethod.instrCount(), BtcARITHM.Oper.ADD, BtcARITHM.Type.LONG));
             return null;
         } else {
             type = BtcINVOKE.Type.STATIC;

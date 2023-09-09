@@ -1,0 +1,60 @@
+fun main(): void = ({
+    array[0] = -2;
+    array[1] = -1;
+    array[2] = -3;
+    array[3] = 4;
+    array[4] = 1;
+    array[5] = -1;
+    array[6] = 6;
+    array[7] = -5;
+    array[8] = 1;
+    array[9] = 0;
+    array[10] = -3;
+    array[11] = -1;
+    array[12] = 3;
+    array[13] = 2;
+    array[14] = -1;
+    array[15] = -5;
+    array[16] = 5;
+    array[17] = 3;
+    array[18] = -4;
+    array[19] = 0;
+
+    result = kadane(^array);
+
+    putInt(result);
+}
+where
+    var result: int;
+    var array: [20]int;
+);
+
+fun kadane(arr: ^[20]int): int = ({
+    current_max = 0;
+    max_ending = 0;
+
+    i = 0;
+
+    while i < 20 do
+        max_ending = max_ending + arr^[i];
+
+        if max_ending < 0 then
+            max_ending = 0;
+        end;
+
+        if current_max < max_ending then
+            current_max = max_ending;
+        end;
+
+        i = i + 1;
+    end;
+
+    current_max;
+}
+where
+    var i: int;
+    var current_max: int;
+    var max_ending: int;
+);
+
+fun putInt(i: int): void = none;

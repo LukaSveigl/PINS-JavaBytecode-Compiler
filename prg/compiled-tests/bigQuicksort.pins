@@ -1,0 +1,90 @@
+fun main(): void = ({
+    fill(^array, 100000);
+    quick(^array, 0, 99999);
+}
+where
+    var array : [100000]int;
+);
+
+fun quick(array : ^[100000]int, low : int, high : int) : void = ({
+    if (low < high) then
+        mid = partition(array, low, high);
+        quick(array, low, mid - 1);
+        quick(array, mid + 1, high);
+    end;
+}
+where
+    var mid : int;
+);
+
+fun partition(array : ^[100000]int, low : int, high : int) : int = ({
+    pivot = array^[high];
+    i = low - 1;
+    j = low;
+    while (j < high) do
+        if (array^[j] <= pivot) then
+            i = i + 1;
+            swap(array, i, j);
+        end;
+        j = j + 1;
+    end;
+    swap(array, i + 1, high);
+    i + 1;
+}
+where
+    var i : int;
+    var j : int;
+    var pivot : int;
+
+    fun swap(array : ^[100000]int, i : int, j : int) : void = ({
+        temp = array^[i];
+        array^[i] = array^[j];
+        array^[j] = temp;
+    }
+    where
+        var temp : int;
+    );
+);
+
+
+fun fill(array : ^[100000]int, size : int) : void = ({
+    i = 0;
+    while (i < size) do
+        rand = randInt(-50, 50);
+        array^[i] = rand;
+        i = i + 1;
+    end;
+}
+where
+    var i : int;
+    var rand : int;
+);
+
+fun print(array : ^[100000]int, size : int) : void = ({
+    i = 0;
+    while (i < size) do
+        putInt((array^)[i]);
+        putChar(' ');
+        i = i + 1;
+    end;
+    putChar(endl());
+}
+where
+    var i : int;
+);
+
+
+#{ Utilities }#
+
+fun endl(): char = (10 : char);
+
+
+#{ Forward declarations: }#
+
+fun putInt(i: int): void = none;
+fun getInt(): int = 0;
+
+fun putChar(c: char): void = none;
+fun getChar(): char = 'a';
+
+fun randInt(min: int, max: int): int = 0;

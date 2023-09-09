@@ -26,9 +26,9 @@ programs can be found in [prg](prg).
 
 ## 3. Building and running
 
-To build this project, simply import the project into your IDE of choice. The project 
-does not use any external libraries, so no additional setup is required. In the future
-an OS-agnostic Makefile will be added.
+To build this project, simply import the project into your IDE of choice. The project has 
+been known to work on atleast Java 17. The project does not use any external libraries, 
+so no additional setup is required. In the future an OS-agnostic Makefile will be added.
 
 To run this project, simply run the 'Compiler' class, which is the entry point of the
 application. The compiler takes multiple arguments, which are described below:
